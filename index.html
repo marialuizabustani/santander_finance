@@ -17,7 +17,7 @@
   </div>
   <header>
     <h1>Carro: <span>financiar ou alugar?</span></h1>
-    <p>Escolha uma opção, preencha os campos e descubra quanto vai pagar por mês e quanto vai gastar no total.</p>
+    <p>Escolha uma opção e veja quanto fica por mês.</p>
   </header>
 
   <nav class="abas" role="tablist" aria-label="Formas de ter um carro">
@@ -128,86 +128,116 @@
 
     <section class="resultado" id="resultado" hidden aria-live="polite">
       <div class="destaque">
-        <p class="destaque-titulo">Você vai pagar</p>
+        <p class="destaque-titulo">Sua parcela fica em</p>
         <p class="destaque-valor" id="d-parcela"></p>
-        <p id="d-detalhe"></p>
+        <p class="destaque-detalhe" id="d-detalhe"></p>
       </div>
 
       <div id="status" class="status"></div>
 
       <div class="cards">
-        <div class="card"><span>Preço do carro à vista</span><strong id="c-preco"></strong></div>
-        <div class="card"><span>Quanto vai pagar só de juros</span><strong id="c-juros"></strong></div>
-        <div class="card forte"><span>Quanto o carro vai custar no total</span><strong id="c-total"></strong></div>
+        <div class="card"><span>Preço à vista</span><strong id="c-preco"></strong></div>
+        <div class="card"><span>Juros no total</span><strong id="c-juros"></strong></div>
+        <div class="card forte"><span>Custo total do carro</span><strong id="c-total"></strong></div>
       </div>
 
-      <div class="titulo-acoes">
-        <h2>E se eu mudar o número de meses?</h2>
-        <button type="button" id="baixar-csv" class="secundario">Baixar tabela</button>
-      </div>
-      <p class="nota">A linha destacada é a sua escolha. Repare: menos meses = parcela maior, mas o carro sai mais barato no final.</p>
-      <div class="tabela-wrap livre">
-        <table class="valores">
-          <thead>
-            <tr>
-              <th>Meses</th>
-              <th>Parcela por mês</th>
-              <th>Total de juros</th>
-              <th>Custo total do carro</th>
-              <th>Cabe no salário?</th>
-            </tr>
-          </thead>
-          <tbody id="valores"></tbody>
-        </table>
-      </div>
+      <div class="secoes">
+        <details class="secao" open>
+          <summary>
+            <span class="secao-titulo">Comparar com outros prazos</span>
+            <span class="secao-sub">Parcela, juros e custo total de 12 a 72 meses</span>
+          </summary>
+          <div class="secao-corpo">
+            <div class="tabela-wrap livre">
+              <table class="valores">
+                <thead>
+                  <tr><th>Meses</th><th>Parcela</th><th>Juros</th><th>Custo total</th></tr>
+                </thead>
+                <tbody id="valores"></tbody>
+              </table>
+            </div>
+            <p class="nota">Menos meses: parcela maior, mas o carro sai mais barato no final.</p>
+            <button type="button" id="baixar-csv" class="link">Baixar esta tabela</button>
+          </div>
+        </details>
 
-      <h2>Parcelas iguais ou que diminuem?</h2>
-      <table class="comparativo">
-        <thead><tr><th></th><th>Todas iguais</th><th>Vão diminuindo</th></tr></thead>
-        <tbody id="comparativo"></tbody>
-      </table>
-      <canvas id="grafico" height="220" aria-label="Gráfico do valor das parcelas ao longo dos meses"></canvas>
+        <details class="secao" id="secao-tipos">
+          <summary>
+            <span class="secao-titulo">Parcelas iguais ou que diminuem?</span>
+            <span class="secao-sub">Compare as duas formas de pagar</span>
+          </summary>
+          <div class="secao-corpo">
+            <table class="comparativo">
+              <thead><tr><th></th><th>Todas iguais</th><th>Vão diminuindo</th></tr></thead>
+              <tbody id="comparativo"></tbody>
+            </table>
+            <p class="rotulo grafico-titulo">Valor da parcela mês a mês</p>
+            <ul class="legenda-grafico">
+              <li><span class="amostra price"></span>Parcelas iguais</li>
+              <li><span class="amostra sac"></span>Parcelas que diminuem</li>
+              <li><span class="amostra limite"></span>Máximo para sua renda</li>
+            </ul>
+            <canvas id="grafico" height="220" aria-label="Gráfico do valor das parcelas ao longo dos meses: parcelas iguais em vermelho, parcelas que diminuem em cinza-escuro e o máximo para sua renda em cinza tracejado"></canvas>
+          </div>
+        </details>
 
-      <details>
-        <summary>Ver a conta em detalhes</summary>
-        <dl id="resumo" class="resumo"></dl>
-      </details>
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">A conta em detalhes</span>
+            <span class="secao-sub">Taxas, imposto, CET e análise da renda</span>
+          </summary>
+          <div class="secao-corpo"><dl id="resumo" class="resumo"></dl></div>
+        </details>
 
-      <details>
-        <summary>Ver parcela por parcela</summary>
-        <p class="nota">Cada parcela tem uma parte de juros (o que o banco cobra) e uma parte que abate a dívida.</p>
-        <div class="tabela-wrap">
-          <table>
-            <thead><tr><th>Mês</th><th>Parcela</th><th>Juros</th><th>Abate da dívida</th><th>Ainda deve</th></tr></thead>
-            <tbody id="tabela"></tbody>
-          </table>
-        </div>
-      </details>
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">Parcela por parcela</span>
+            <span class="secao-sub">Quanto de cada parcela é juros e quanto abate a dívida</span>
+          </summary>
+          <div class="secao-corpo">
+            <div class="tabela-wrap">
+              <table>
+                <thead><tr><th>Mês</th><th>Parcela</th><th>Juros</th><th>Abate da dívida</th><th>Ainda deve</th></tr></thead>
+                <tbody id="tabela"></tbody>
+              </table>
+            </div>
+          </div>
+        </details>
 
-      <details>
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">O que significa cada termo</span>
+            <span class="secao-sub">Entrada, juros, IOF, CET, Price e SAC</span>
+          </summary>
+          <div class="secao-corpo">
         <summary>Não entendi algum termo</summary>
-        <dl class="glossario">
-          <dt>Entrada</dt><dd>Parte do preço que você paga na hora, com seu dinheiro.</dd>
-          <dt>Juros</dt><dd>O valor que o banco cobra por emprestar o dinheiro. É o quanto você paga a mais.</dd>
-          <dt>Taxa de juros</dt><dd>A porcentagem de juros cobrada a cada mês (ou ano) sobre o que você ainda deve.</dd>
-          <dt>IOF</dt><dd>Imposto do governo cobrado em empréstimos e financiamentos.</dd>
-          <dt>CET (Custo Efetivo Total)</dt><dd>A taxa "de verdade" do financiamento, somando juros, impostos e taxas. Use para comparar ofertas de bancos diferentes: quanto menor, melhor.</dd>
-          <dt>Price</dt><dd>Forma de pagamento em que todas as parcelas têm o mesmo valor.</dd>
-          <dt>SAC</dt><dd>Forma de pagamento em que as parcelas começam maiores e diminuem a cada mês. No total, sai mais barato.</dd>
-          <dt>Comprometimento de renda</dt><dd>Quanto do seu salário vai para a parcela. Os bancos costumam aceitar até 30%.</dd>
-        </dl>
-      </details>
+            <dl class="glossario">
+              <dt>Entrada</dt><dd>Parte do preço que você paga na hora, com seu dinheiro.</dd>
+              <dt>Juros</dt><dd>O valor que o banco cobra por emprestar o dinheiro. É o quanto você paga a mais.</dd>
+              <dt>Taxa de juros</dt><dd>A porcentagem de juros cobrada a cada mês (ou ano) sobre o que você ainda deve.</dd>
+              <dt>IOF</dt><dd>Imposto do governo cobrado em empréstimos e financiamentos.</dd>
+              <dt>CET (Custo Efetivo Total)</dt><dd>A taxa "de verdade" do financiamento, somando juros, impostos e taxas. Use para comparar ofertas de bancos diferentes: quanto menor, melhor.</dd>
+              <dt>Price</dt><dd>Forma de pagamento em que todas as parcelas têm o mesmo valor.</dd>
+              <dt>SAC</dt><dd>Forma de pagamento em que as parcelas começam maiores e diminuem a cada mês. No total, sai mais barato.</dd>
+              <dt>Comprometimento de renda</dt><dd>Quanto do seu salário vai para a parcela. Os bancos costumam aceitar até 30%.</dd>
+            </dl>
+          </div>
+        </details>
+      </div>
 
-      <p class="aviso">Isto é só uma simulação. Os valores reais dependem da análise do banco ou da financeira.</p>
+      <p class="aviso">Simulação para referência. Os valores finais dependem da análise de crédito.</p>
     </section>
   </main>
 
   <!-- ===================== ALUGAR E COMPRAR NO FINAL (LEASING) ===================== -->
   <main class="painel" id="painel-leasing" role="tabpanel" aria-labelledby="aba-leasing" hidden>
     <div class="intro-aba">
-      <strong>Como funciona:</strong> você usa o carro pagando parcelas, como num aluguel. No final do contrato,
-      escolhe se paga um valor combinado e <strong>fica com o carro</strong>, ou se devolve. Também é chamado de
-      <em>leasing</em>. Não tem cobrança de IOF, mas o carro fica no nome do banco até o fim e o seguro é obrigatório.
+      <p>Você paga parcelas como num aluguel e, no fim, <strong>decide se fica com o carro</strong>.</p>
+      <details>
+        <summary>Como funciona</summary>
+        <p>Também chamado de <em>leasing</em>. No final do contrato, você paga um valor combinado e fica com o carro,
+        ou devolve. Não tem cobrança de IOF. O carro fica no nome do banco até o fim e o seguro é obrigatório.</p>
+      </details>
     </div>
     <form id="form-leasing" novalidate>
       <fieldset>
@@ -283,66 +313,85 @@
 
     <section class="resultado" id="l-resultado" hidden aria-live="polite">
       <div class="destaque">
-        <p class="destaque-titulo">Você vai pagar</p>
+        <p class="destaque-titulo">Sua parcela fica em</p>
         <p class="destaque-valor" id="l-parcela"></p>
-        <p id="l-detalhe"></p>
+        <p class="destaque-detalhe" id="l-detalhe"></p>
       </div>
       <div id="l-status" class="status"></div>
 
-      <h2>No final do contrato, você escolhe:</h2>
+      <p class="rotulo">No fim do contrato, você escolhe:</p>
       <div class="escolhas">
         <div class="escolha">
           <p class="escolha-titulo">Ficar com o carro</p>
-          <p>Paga mais <strong id="l-residual"></strong> no final.</p>
-          <p class="escolha-total">Total gasto: <strong id="l-total-comprar"></strong></p>
-          <small id="l-juros"></small>
+          <p>Paga mais <strong id="l-residual"></strong></p>
+          <p class="escolha-total">Total: <strong id="l-total-comprar"></strong></p>
         </div>
         <div class="escolha">
           <p class="escolha-titulo">Devolver o carro</p>
-          <p>Não paga o valor final.</p>
-          <p class="escolha-total">Total gasto: <strong id="l-total-devolver"></strong></p>
-          <small>Você usou o carro por <span id="l-anos"></span>. Dependendo do contrato, parte da entrada pode ser devolvida.</small>
+          <p>Não paga mais nada</p>
+          <p class="escolha-total">Total: <strong id="l-total-devolver"></strong></p>
         </div>
       </div>
 
-      <h2>Comparando com financiar</h2>
-      <p class="nota">Mesmo carro, mesma entrada, mesmos meses e mesma taxa de juros. Nos dois casos você termina dono do carro.</p>
-      <table class="comparativo">
-        <thead><tr><th></th><th>Alugar e comprar no final</th><th>Financiar</th></tr></thead>
-        <tbody id="l-comparativo"></tbody>
-      </table>
-      <p class="conclusao" id="l-conclusao"></p>
+      <div class="secoes">
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">Comparar com financiar</span>
+            <span class="secao-sub" id="l-resumo-comparacao"></span>
+          </summary>
+          <div class="secao-corpo">
+            <p class="nota">Mesmo carro, entrada, prazo e taxa. Nos dois casos você termina com o carro.</p>
+            <table class="comparativo">
+              <thead><tr><th></th><th>Alugar e comprar</th><th>Financiar</th></tr></thead>
+              <tbody id="l-comparativo"></tbody>
+            </table>
+            <p class="conclusao" id="l-conclusao"></p>
+          </div>
+        </details>
 
-      <div class="titulo-acoes">
-        <h2>E se eu mudar o número de meses?</h2>
-        <button type="button" id="l-baixar-csv" class="secundario">Baixar tabela</button>
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">Comparar com outros prazos</span>
+            <span class="secao-sub">Parcela e custo total de 24 a 60 meses</span>
+          </summary>
+          <div class="secao-corpo">
+            <div class="tabela-wrap livre">
+              <table class="valores">
+                <thead><tr><th>Meses</th><th>Parcela</th><th>Valor final</th><th>Custo total</th></tr></thead>
+                <tbody id="l-valores"></tbody>
+              </table>
+            </div>
+            <button type="button" id="l-baixar-csv" class="link">Baixar esta tabela</button>
+          </div>
+        </details>
+
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">A conta em detalhes</span>
+            <span class="secao-sub">Taxas, juros e CET</span>
+          </summary>
+          <div class="secao-corpo">
+            <p class="nota" id="l-juros"></p>
+            <dl id="l-resumo" class="resumo"></dl>
+            <p class="nota">Se devolver o carro, parte da entrada pode voltar, conforme o contrato.</p>
+          </div>
+        </details>
       </div>
-      <p class="nota">A linha destacada é a sua escolha.</p>
-      <div class="tabela-wrap livre">
-        <table class="valores">
-          <thead>
-            <tr><th>Meses</th><th>Parcela por mês</th><th>Valor final</th><th>Total se ficar com o carro</th><th>Cabe no salário?</th></tr>
-          </thead>
-          <tbody id="l-valores"></tbody>
-        </table>
-      </div>
 
-      <details>
-        <summary>Ver a conta em detalhes</summary>
-        <dl id="l-resumo" class="resumo"></dl>
-      </details>
-
-      <p class="aviso">Isto é só uma simulação. Regras de devolução, seguro e valor final dependem de cada contrato.</p>
+      <p class="aviso">Simulação para referência. Regras de devolução, seguro e valor final dependem do contrato.</p>
     </section>
   </main>
 
   <!-- ===================== ALUGAR SEM COMPRAR (ASSINATURA) ===================== -->
   <main class="painel" id="painel-assinatura" role="tabpanel" aria-labelledby="aba-assinatura" hidden>
     <div class="intro-aba">
-      <strong>Como funciona:</strong> você paga uma mensalidade fixa e usa um carro novo. Seguro, IPVA, documentação
-      e revisões já estão incluídos. No final do contrato você <strong>devolve o carro</strong> e não fica com nada.
-      Também é chamado de <em>carro por assinatura</em> ou <em>locação de longo prazo</em>. Os contratos costumam
-      durar de 12 a 36 meses.
+      <p>Uma mensalidade fixa com <strong>seguro, IPVA e revisões inclusos</strong>. No fim, você devolve o carro.</p>
+      <details>
+        <summary>Como funciona</summary>
+        <p>Também chamado de <em>carro por assinatura</em> ou <em>locação de longo prazo</em>. Os contratos costumam
+        durar de 12 a 36 meses. Você usa um carro novo, sem entrada, e não precisa se preocupar com documentação e
+        manutenção. No final, devolve o carro e pode assinar outro.</p>
+      </details>
     </div>
     <form id="form-assinatura" novalidate>
       <fieldset>
@@ -417,53 +466,73 @@
 
     <section class="resultado" id="a-resultado" hidden aria-live="polite">
       <div class="destaque">
-        <p class="destaque-titulo">Você vai pagar</p>
+        <p class="destaque-titulo">Sua mensalidade fica em</p>
         <p class="destaque-valor" id="a-mensalidade"></p>
-        <p id="a-detalhe"></p>
+        <p class="destaque-detalhe" id="a-detalhe"></p>
       </div>
       <div id="a-status" class="status"></div>
 
       <div class="cards">
-        <div class="card"><span>Total pago no contrato</span><strong id="a-total"></strong></div>
-        <div class="card"><span>No final você fica com</span><strong>Nada <small>o carro é devolvido</small></strong></div>
-        <div class="card"><span>Já está incluso</span><strong class="pequeno">Seguro, IPVA, documentos e revisões</strong></div>
+        <div class="card"><span>Total no contrato</span><strong id="a-total"></strong></div>
+        <div class="card"><span>Entrada</span><strong>Sem entrada</strong></div>
+        <div class="card"><span>Já incluso</span><strong class="pequeno">Seguro, IPVA e revisões</strong></div>
       </div>
 
-      <h2>Assinar ou comprar financiado?</h2>
-      <p class="nota" id="a-nota-comparacao"></p>
-      <table class="comparativo">
-        <thead><tr><th></th><th>Assinar</th><th>Comprar financiado</th></tr></thead>
-        <tbody id="a-comparativo"></tbody>
-      </table>
       <p class="conclusao" id="a-conclusao"></p>
 
-      <h2>Vale a pena para quem…</h2>
-      <div class="escolhas">
-        <div class="escolha">
-          <p class="escolha-titulo">Assinar</p>
-          <ul>
-            <li>não quer se preocupar com seguro, IPVA e revisões;</li>
-            <li>não tem dinheiro para a entrada;</li>
-            <li>gosta de trocar de carro a cada 1 a 3 anos.</li>
-          </ul>
-          <small>Atenção: há limite de quilômetros por mês e multa se cancelar antes do fim.</small>
-        </div>
-        <div class="escolha">
-          <p class="escolha-titulo">Comprar</p>
-          <ul>
-            <li>quer ficar com o carro por muitos anos;</li>
-            <li>roda muitos quilômetros;</li>
-            <li>quer ter um bem que pode vender depois.</li>
-          </ul>
-        </div>
+      <div class="secoes">
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">Assinar ou comprar: a conta completa</span>
+            <span class="secao-sub">Entrada, gasto por mês e valor do carro no final</span>
+          </summary>
+          <div class="secao-corpo">
+            <p class="nota" id="a-nota-comparacao"></p>
+            <table class="comparativo">
+              <thead><tr><th></th><th>Assinar</th><th>Comprar</th></tr></thead>
+              <tbody id="a-comparativo"></tbody>
+            </table>
+          </div>
+        </details>
+
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">Para quem vale a pena</span>
+            <span class="secao-sub">Ajuda para decidir</span>
+          </summary>
+          <div class="secao-corpo">
+            <div class="escolhas">
+              <div class="escolha">
+                <p class="escolha-titulo">Assinar</p>
+                <ul>
+                  <li>quer praticidade, sem cuidar de seguro e revisões;</li>
+                  <li>prefere não dar entrada;</li>
+                  <li>gosta de trocar de carro a cada 1 a 3 anos.</li>
+                </ul>
+                <small>Os contratos têm limite de quilômetros por mês e regras para cancelar antes do fim.</small>
+              </div>
+              <div class="escolha">
+                <p class="escolha-titulo">Comprar</p>
+                <ul>
+                  <li>quer ficar com o carro por muitos anos;</li>
+                  <li>roda muitos quilômetros;</li>
+                  <li>quer ter um bem para vender depois.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="secao">
+          <summary>
+            <span class="secao-titulo">A conta em detalhes</span>
+            <span class="secao-sub">Seguro, IPVA, revisões e desvalorização</span>
+          </summary>
+          <div class="secao-corpo"><dl id="a-resumo" class="resumo"></dl></div>
+        </details>
       </div>
 
-      <details>
-        <summary>Ver a conta em detalhes</summary>
-        <dl id="a-resumo" class="resumo"></dl>
-      </details>
-
-      <p class="aviso">Isto é só uma simulação. Mensalidade, franquia de quilômetros e regras de cancelamento dependem de cada locadora.</p>
+      <p class="aviso">Simulação para referência. Mensalidade, quilometragem e regras de cancelamento dependem da proposta.</p>
     </section>
   </main>
 

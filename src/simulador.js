@@ -226,14 +226,14 @@
     const pendencias = [];
     if (comprometimento > p.limiteComprometimento) {
       pendencias.push(
-        `A parcela compromete ${pctBR(comprometimento)} da sua renda. ` +
-          `O recomendado é no máximo ${pctBR(p.limiteComprometimento, 0)}.`
+        `A parcela usa ${pctBR(comprometimento)} da sua renda, e o ideal é até ` +
+          `${pctBR(p.limiteComprometimento, 0)}.`
       );
     }
     if (entradaPct + 1e-9 < p.entradaMinimaPct) {
       pendencias.push(
-        `Entrada de ${pctBR(entradaPct)} do valor do carro. ` +
-          `Normalmente se pede pelo menos ${pctBR(p.entradaMinimaPct, 0)}.`
+        `A entrada é de ${pctBR(entradaPct)} do preço do carro, e o comum é a partir de ` +
+          `${pctBR(p.entradaMinimaPct, 0)}.`
       );
     }
 

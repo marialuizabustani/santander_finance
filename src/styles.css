@@ -29,8 +29,8 @@
   --warn-fg: var(--london);
   --selecionado: var(--rio);
   --price: var(--santander-red);
-  --sac: var(--madrid);
-  --limite: var(--black);
+  --sac: #3d3d3d;          /* cinza-escuro: contrasta com o vermelho */
+  --limite: #9e9e9e;
 }
 
 * { box-sizing: border-box; }
@@ -75,7 +75,7 @@ button {
   width: 100%; padding: 10px; border: 0; border-radius: 6px;
   background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer;
 }
-.erros { color: var(--limite); }
+.erros { color: var(--london); }
 
 .status { padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; }
 .status.ok { background: var(--ok-bg); color: var(--ok-fg); }
@@ -232,4 +232,85 @@ input[type=radio], input[type=checkbox] { accent-color: var(--accent); }
 @media (max-width: 520px) {
   .barra-marca .logo { height: 25px; } /* tamanho mínimo do guia: 25px */
   .barra-marca .produto { font-size: 0.85rem; }
+}
+
+/* ---- Organização visual (menos poluição) ---- */
+header { padding-top: 20px; }
+header p { font-size: 0.95rem; }
+main { gap: 20px; }
+form, .resultado { border-color: transparent; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); border-radius: 14px; padding: 20px; }
+fieldset { margin-bottom: 20px; }
+.dica { font-size: 0.8rem; }
+
+/* Introdução das abas */
+.intro-aba { border: 0; border-left: 4px solid var(--accent); padding: 12px 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); }
+.intro-aba p { margin: 0; }
+.intro-aba details { margin-top: 6px; }
+.intro-aba summary { font-weight: 500; font-size: 0.85rem; color: var(--accent); }
+.intro-aba details p { margin-top: 6px; color: var(--muted); font-size: 0.9rem; }
+
+/* Destaque e status */
+.destaque { padding: 4px 0 12px; }
+.destaque-detalhe { color: var(--muted); font-size: 0.9rem; }
+.status { font-size: 0.92rem; border-radius: 10px; }
+.status.alerta { background: var(--lisbon); color: var(--text); border-left: 4px solid var(--mexico-city); }
+.status.alerta ul { margin-top: 2px; }
+.dicas-titulo { margin-top: 8px; font-weight: 600; }
+
+/* Cartões mais leves */
+.cards { gap: 8px; margin-bottom: 4px; }
+.card { border: 0; background: var(--lisbon); border-radius: 10px; }
+.card.forte { border: 0; background: var(--rio); }
+.card.forte strong { color: var(--london); }
+
+/* Seções recolhíveis */
+.secoes { margin-top: 20px; border-top: 1px solid var(--border); }
+details.secao { margin: 0; border-bottom: 1px solid var(--border); }
+details.secao > summary {
+  list-style: none; display: grid; grid-template-columns: 1fr auto; column-gap: 12px;
+  padding: 14px 4px; cursor: pointer;
+}
+details.secao > summary::-webkit-details-marker { display: none; }
+details.secao > summary::after {
+  content: ''; grid-column: 2; grid-row: 1 / span 2; align-self: center;
+  width: 9px; height: 9px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg); transition: transform 0.2s;
+}
+details.secao[open] > summary::after { transform: rotate(-135deg); }
+details.secao > summary:hover .secao-titulo { color: var(--accent); }
+.secao-titulo { font-weight: 600; font-size: 1rem; }
+.secao-sub { grid-column: 1; color: var(--muted); font-size: 0.85rem; font-weight: 400; }
+.secao-corpo { padding: 0 4px 18px; }
+.secao-corpo > .nota:first-child { margin-top: 0; }
+
+.rotulo { font-weight: 600; margin: 18px 0 8px; }
+button.link {
+  width: auto; background: none; border: 0; padding: 4px 0; color: var(--accent);
+  font-weight: 500; text-decoration: underline; text-underline-offset: 3px;
+}
+button.link:hover { color: var(--accent-hover); background: none; }
+
+/* Selos na tabela de prazos */
+.selo { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 500; vertical-align: middle; white-space: nowrap; }
+.selo.ok { background: var(--ok-bg); color: var(--ok-fg); }
+.selo.acima { background: var(--lisbon); color: var(--muted); }
+.valores tbody th { white-space: nowrap; }
+
+/* Gráfico */
+.grafico-titulo { margin-top: 20px; }
+.legenda-grafico { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0; margin: 0 0 6px; font-size: 0.85rem; }
+.legenda-grafico li { display: flex; align-items: center; gap: 8px; }
+.amostra { display: inline-block; width: 22px; height: 0; border-top: 3px solid; border-radius: 2px; }
+.amostra.price { border-color: var(--price); }
+.amostra.sac { border-color: var(--sac); }
+.amostra.limite { border-top: 2px dashed var(--limite); }
+
+/* Escolhas do leasing */
+.escolhas { margin-top: 0; }
+.escolha { border: 0; background: var(--lisbon); border-radius: 10px; }
+.conclusao { background: var(--lisbon); border-radius: 10px; font-size: 0.95rem; }
+.aviso { font-size: 0.8rem; text-align: center; }
+
+@media (max-width: 620px) {
+  .valores tbody th { display: flex; justify-content: space-between; align-items: center; }
 }

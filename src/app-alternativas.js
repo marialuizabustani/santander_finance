@@ -4,21 +4,21 @@
   const A = window.Alternativas;
   const { $, brl, pct, numero, anos, linha } = window.Util;
 
-  const cabeTexto = (ok, comprometimento) =>
-    '<span>' +
-    (ok ? '<span class="sim">✓ Sim</span>' : '<span class="fora">✗ Não</span>') +
-    `<span class="sub">${pct(comprometimento, 0)} da renda</span></span>`;
+  const selo = (ok) =>
+    ok
+      ? '<span class="selo ok" title="Cabe no orçamento">✓ cabe</span>'
+      : '<span class="selo acima" title="Acima de 30% da renda">acima do ideal</span>';
 
   function statusRenda(el, renda, limite, nome) {
     if (renda.cabe) {
       el.className = 'status ok';
-      el.innerHTML = `<strong>✓ A ${nome} cabe no seu salário.</strong> Ela usa ${pct(renda.comprometimento, 0)} da sua renda.`;
+      el.innerHTML = `<strong>✓ Cabe no seu orçamento.</strong> A ${nome} usa ${pct(renda.comprometimento, 0)} da sua renda.`;
     } else {
       el.className = 'status alerta';
       el.innerHTML =
-        `<strong>⚠ Atenção, pode ser recusado:</strong> a ${nome} usa ${pct(renda.comprometimento, 0)} da sua renda. ` +
-        `O recomendado é no máximo ${pct(limite, 0)}. Para essa ${nome}, seria preciso uma renda de ` +
-        `<strong>${brl.format(renda.rendaMinimaNecessaria)}</strong>.`;
+        `<strong>Vale ajustar a simulação.</strong> A ${nome} usa ${pct(renda.comprometimento, 0)} da sua renda, ` +
+        `e o ideal é até ${pct(limite, 0)}. Experimente um prazo maior ou uma entrada maior. ` +
+        `Para esta ${nome}, a renda ideal seria de ${brl.format(renda.rendaMinimaNecessaria)}.`;
     }
   }
 
@@ -75,9 +75,8 @@
 
     $('l-residual').textContent = brl.format(r.valorResidual);
     $('l-total-comprar').textContent = brl.format(r.totalSeComprar);
-    $('l-juros').textContent = `Desse total, ${brl.format(r.totalJuros)} são juros e taxas.`;
+    $('l-juros').textContent = `Se ficar com o carro, ${brl.format(r.totalJuros)} do total são juros e taxas.`;
     $('l-total-devolver').textContent = brl.format(r.totalSeDevolver);
-    $('l-anos').textContent = anos(p.prazoMeses);
 
     const comp = [
       ['Entrada', brl.format(p.entrada), brl.format(fin.parametros.entrada)],
@@ -89,6 +88,10 @@
     ];
     $('l-comparativo').innerHTML = comp.map(([n, a, b]) => `<tr><th>${n}</th><td>${a}</td><td>${b}</td></tr>`).join('');
 
+    $('l-resumo-comparacao').textContent =
+      Math.abs(diferenca) < 1 ? 'Custam praticamente o mesmo'
+        : diferenca > 0 ? `Este sai ${brl.format(diferenca)} mais barato`
+        : `Financiar sai ${brl.format(-diferenca)} mais barato`;
     const conc = $('l-conclusao');
     if (Math.abs(diferenca) < 1) {
       conc.textContent = 'Os dois custam praticamente o mesmo no total.';
@@ -104,11 +107,10 @@
       .map(
         (l) =>
           `<tr class="${l.prazoMeses === p.prazoMeses ? 'selecionado' : ''}">` +
-          `<th>${l.prazoMeses}x<span class="sub">${anos(l.prazoMeses)}</span></th>` +
-          `<td data-rotulo="Parcela por mês">${brl.format(l.parcela)}</td>` +
+          `<th>${l.prazoMeses}x ${selo(l.aprovado)}</th>` +
+          `<td data-rotulo="Parcela">${brl.format(l.parcela)}</td>` +
           `<td data-rotulo="Valor final">${brl.format(l.valorResidual)}</td>` +
-          `<td data-rotulo="Total se ficar com o carro">${brl.format(l.totalSeComprar)}</td>` +
-          `<td data-rotulo="Cabe no salário?">${cabeTexto(l.aprovado, l.comprometimento)}</td></tr>`
+          `<td data-rotulo="Custo total">${brl.format(l.totalSeComprar)}</td></tr>`
       )
       .join('');
 
@@ -170,8 +172,8 @@
 
     $('a-mensalidade').textContent = `${p.prazoMeses}x de ${brl.format(r.mensalidade)}`;
     $('a-detalhe').textContent = r.mensalidadeEstimada
-      ? `Valor estimado (2,5% do preço do carro por mês). Coloque a mensalidade da proposta para um resultado mais preciso.`
-      : `Mensalidade fixa durante ${anos(p.prazoMeses)}, sem entrada.`;
+      ? `Valor estimado. Se tiver uma proposta, coloque a mensalidade dela.`
+      : `Valor fixo por ${anos(p.prazoMeses)}, sem entrada.`;
     statusRenda($('a-status'), r.renda, p.limiteComprometimento, 'mensalidade');
     $('a-total').textContent = brl.format(r.totalPago);
 
@@ -193,10 +195,10 @@
     if (Math.abs(e) < 100) {
       conc.textContent = 'Na prática, assinar e comprar custam quase o mesmo. Escolha pelo que for mais cômodo para você.';
     } else if (e > 0) {
-      conc.innerHTML = `Neste período, <strong>assinar sai cerca de ${brl.format(e)} mais barato</strong> do que comprar, já descontando o valor do carro no final.`;
+      conc.innerHTML = `Em ${anos(p.prazoMeses)}, <strong>assinar sai cerca de ${brl.format(e)} mais barato</strong> do que comprar financiado, já considerando quanto o carro valeria no final.`;
     } else {
-      conc.innerHTML = `Neste período, <strong>comprar sai cerca de ${brl.format(-e)} mais barato</strong>, porque no final você fica com um carro que vale ${brl.format(c.posse.valorFinal)}.` +
-        ' Por outro lado, assinar não exige entrada e não tem surpresas com manutenção.';
+      conc.innerHTML = `Em ${anos(p.prazoMeses)}, <strong>comprar financiado sai cerca de ${brl.format(-e)} mais barato</strong>, porque no final o carro é seu. ` +
+        'Já assinar não pede entrada e não tem gastos surpresa.';
     }
 
     $('a-resumo').innerHTML = [

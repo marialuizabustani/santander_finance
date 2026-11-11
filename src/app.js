@@ -43,18 +43,17 @@
       $('d-detalhe').textContent = `São ${p.prazoMeses} parcelas iguais, uma por mês (${anos(p.prazoMeses)}).`;
     }
 
-    // Cabe no bolso?
+    // Cabe no orçamento?
     const st = $('status');
     const rendaPct = pct(r.renda.comprometimento, 0);
     if (r.aprovado) {
       st.className = 'status ok';
-      st.innerHTML = `<strong>✓ A parcela cabe no seu salário.</strong> Ela usa ${rendaPct} da sua renda, dentro do que os bancos costumam aceitar.`;
+      st.innerHTML = `<strong>✓ Cabe no seu orçamento.</strong> A parcela usa ${rendaPct} da sua renda.`;
     } else {
       st.className = 'status alerta';
       st.innerHTML =
-        '<strong>⚠ Atenção, o banco pode recusar:</strong><ul>' +
-        r.pendencias.map((x) => `<li>${x}</li>`).join('') +
-        '</ul>' + sugestoes(r);
+        '<strong>Vale ajustar a simulação.</strong> ' +
+        r.pendencias.join(' ') + sugestoes(r);
     }
 
     const extra = r.custoTotal - p.valorBem;
@@ -71,7 +70,7 @@
       ['Última parcela', (x) => brl.format(x.ultimaParcela)],
       ['Total de juros', (x) => brl.format(x.totalJuros)],
       ['Custo total do carro', (x) => brl.format(x.custoTotal)],
-      ['Cabe no salário?', (x) => (x.aprovado ? '✓ Sim' : '✗ Não')],
+      ['Cabe no orçamento?', (x) => (x.aprovado ? '✓ Sim' : 'Acima do ideal')],
     ];
     $('comparativo').innerHTML = comp
       .map(([nome, f]) => `<tr><th>${nome}</th><td>${f(price)}</td><td>${f(sacR)}</td></tr>`)
@@ -123,7 +122,7 @@
     if (r.entradaPct + 1e-9 < p.entradaMinimaPct) {
       dicas.push(`aumentar a entrada para pelo menos <strong>${brl.format(r.entradaMinima)}</strong>`);
     }
-    return dicas.length ? '<p class="dicas-titulo">O que você pode fazer:</p><ul>' + dicas.map((d) => `<li>${d}</li>`).join('') + '</ul>' : '';
+    return dicas.length ? '<p class="dicas-titulo">Algumas ideias:</p><ul>' + dicas.map((d) => `<li>${d}</li>`).join('') + '</ul>' : '';
   }
 
   /** Menor entrada (arredondada para cima em R$ 100) que faz a parcela caber na renda. */
@@ -153,19 +152,17 @@
     $('valores').innerHTML = linhasValores
       .map((l) => {
         const mensal = sac
-          ? `${brl.format(l.primeiraParcela)}<span class="sub">caindo até ${brl.format(l.ultimaParcela)}</span>`
+          ? `${brl.format(l.primeiraParcela)}<span class="sub">até ${brl.format(l.ultimaParcela)}</span>`
           : brl.format(l.primeiraParcela);
-        const cabe =
-          '<span>' +
-          (l.aprovado ? '<span class="sim">✓ Sim</span>' : '<span class="fora">✗ Não</span>') +
-          `<span class="sub">${pct(l.comprometimento, 0)} da renda</span></span>`;
+        const selo = l.aprovado
+          ? '<span class="selo ok" title="Cabe no orçamento">✓ cabe</span>'
+          : '<span class="selo acima" title="Parcela acima de 30% da renda">acima do ideal</span>';
         return (
           `<tr class="${l.prazoMeses === p.prazoMeses ? 'selecionado' : ''}">` +
-          `<th>${l.prazoMeses}x<span class="sub">${anos(l.prazoMeses)}</span></th>` +
-          `<td data-rotulo="Parcela por mês">${mensal}</td>` +
-          `<td data-rotulo="Total de juros">${brl.format(l.totalJuros)}</td>` +
-          `<td data-rotulo="Custo total do carro">${brl.format(l.valorTotal)}</td>` +
-          `<td data-rotulo="Cabe no salário?">${cabe}</td></tr>`
+          `<th>${l.prazoMeses}x ${selo}</th>` +
+          `<td data-rotulo="Parcela">${mensal}</td>` +
+          `<td data-rotulo="Juros">${brl.format(l.totalJuros)}</td>` +
+          `<td data-rotulo="Custo total">${brl.format(l.valorTotal)}</td></tr>`
         );
       })
       .join('');
@@ -183,8 +180,9 @@
 
   function desenharGrafico(price, sac, limite) {
     const cv = $('grafico');
-    const dpr = window.devicePixelRatio || 1;
     const w = cv.clientWidth;
+    if (!w) return; // seção fechada: desenha quando abrir
+    const dpr = window.devicePixelRatio || 1;
     const h = 220;
     cv.width = w * dpr;
     cv.height = h * dpr;
@@ -194,65 +192,60 @@
 
     const css = getComputedStyle(document.documentElement);
     const cor = (v) => css.getPropertyValue(v).trim();
-    const pad = { l: 70, r: 12, t: w < 520 ? 60 : 28, b: 28 };
+    const pad = { l: 64, r: 12, t: 12, b: 26 };
     const n = price.tabela.length;
-    const max = Math.max(price.maiorParcela, sac.maiorParcela, limite) * 1.08;
+    const max = Math.max(price.maiorParcela, sac.maiorParcela, limite) * 1.1;
     const x = (i) => pad.l + ((w - pad.l - pad.r) * (i - 1)) / Math.max(1, n - 1);
     const y = (v) => h - pad.b - ((h - pad.t - pad.b) * v) / max;
 
     ctx.font = '11px system-ui, sans-serif';
-    ctx.fillStyle = cor('--muted');
-    ctx.strokeStyle = cor('--grid');
     ctx.lineWidth = 1;
     for (let k = 0; k <= 4; k++) {
       const v = (max * k) / 4;
+      ctx.strokeStyle = cor('--grid');
       ctx.beginPath();
       ctx.moveTo(pad.l, y(v));
       ctx.lineTo(w - pad.r, y(v));
       ctx.stroke();
+      ctx.fillStyle = cor('--muted');
       ctx.fillText(brl.format(Math.round(v)).replace(',00', ''), 4, y(v) + 4);
     }
     ctx.fillText('1º mês', pad.l, h - 8);
     ctx.fillText(`${n}º mês`, w - pad.r - 44, h - 8);
 
-    const serie = (tab, c) => {
-      ctx.strokeStyle = c;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      tab.forEach((l, i) => (i ? ctx.lineTo(x(l.mes), y(l.parcela)) : ctx.moveTo(x(l.mes), y(l.parcela))));
-      ctx.stroke();
-    };
-    serie(price.tabela, cor('--price'));
-    serie(sac.tabela, cor('--sac'));
-
-    ctx.setLineDash([5, 4]);
+    // limite de renda: cinza tracejado, ao fundo
+    ctx.setLineDash([6, 5]);
     ctx.strokeStyle = cor('--limite');
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(pad.l, y(limite));
     ctx.lineTo(w - pad.r, y(limite));
     ctx.stroke();
     ctx.setLineDash([]);
 
-    const legenda = [
-      ['Parcelas iguais', cor('--price')],
-      ['Parcelas que diminuem', cor('--sac')],
-      ['Máximo para o seu salário', cor('--limite')],
-    ];
-    let lx = pad.l;
-    let ly = 6;
-    legenda.forEach(([t, c]) => {
-      const largura = ctx.measureText(t).width + 30;
-      if (lx > pad.l && lx + largura > w) {
-        lx = pad.l;
-        ly += 16;
-      }
-      ctx.fillStyle = c;
-      ctx.fillRect(lx, ly, 10, 10);
-      ctx.fillStyle = cor('--text');
-      ctx.fillText(t, lx + 14, ly + 9);
-      lx += largura;
-    });
+    const serie = (tab, c) => {
+      ctx.strokeStyle = c;
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      tab.forEach((l, i) => (i ? ctx.lineTo(x(l.mes), y(l.parcela)) : ctx.moveTo(x(l.mes), y(l.parcela))));
+      ctx.stroke();
+      // pontos no início e no fim
+      [tab[0], tab[tab.length - 1]].forEach((l) => {
+        ctx.fillStyle = c;
+        ctx.beginPath();
+        ctx.arc(x(l.mes), y(l.parcela), 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+    serie(sac.tabela, cor('--sac'));
+    serie(price.tabela, cor('--price'));
   }
+
+  // o gráfico fica numa seção recolhida: desenha ao abrir
+  $('secao-tipos').addEventListener('toggle', () => {
+    if ($('secao-tipos').open) form.requestSubmit();
+  });
 
   form.addEventListener('submit', (ev) => {
     ev.preventDefault();

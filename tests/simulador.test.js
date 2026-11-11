@@ -68,7 +68,7 @@ test('análise de renda: reprova quando parcela passa do limite', () => {
   const r = S.simular({ ...base, rendaMensal: 5000 });
   assert.equal(r.aprovado, false);
   perto(r.renda.rendaMinimaNecessaria, r.maiorParcela / 0.3);
-  assert.ok(r.pendencias[0].includes('compromete'));
+  assert.ok(r.pendencias[0].includes('da sua renda'));
 });
 
 test('renda complementar é somada', () => {
@@ -89,7 +89,7 @@ test('valor máximo financiável gera parcela igual ao limite', () => {
 test('entrada abaixo do mínimo gera pendência', () => {
   const r = S.simular({ ...base, entrada: 5000, rendaMensal: 50000 });
   assert.equal(r.aprovado, false);
-  assert.ok(r.pendencias.some((p) => p.includes('Entrada')));
+  assert.ok(r.pendencias.some((p) => p.includes('entrada')));
 });
 
 test('validação de entradas', () => {
