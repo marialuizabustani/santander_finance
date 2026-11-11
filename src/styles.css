@@ -97,6 +97,16 @@ th, td { padding: 6px 8px; border-bottom: 1px solid var(--grid); text-align: rig
 th:first-child, td:first-child { text-align: left; }
 .tabela-wrap { max-height: 420px; overflow: auto; }
 canvas { width: 100%; display: block; }
+.titulo-acoes { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 22px; }
+.titulo-acoes h2 { margin: 0; }
+button.secundario {
+  width: auto; padding: 6px 12px; background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); font-weight: 500;
+}
+.nota { color: var(--muted); font-size: 0.85rem; margin: 6px 0 8px; }
+.valores tr.selecionado td, .valores tr.selecionado th { background: var(--ok-bg); font-weight: 600; }
+.valores .sub { display: block; font-size: 0.78rem; color: var(--muted); font-weight: 400; }
+.valores .fora { color: var(--warn-fg); }
 details { margin-top: 20px; }
 summary { cursor: pointer; font-weight: 600; }
 .aviso { color: var(--muted); font-size: 0.85rem; margin-top: 20px; }

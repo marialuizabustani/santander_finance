@@ -89,6 +89,8 @@
       .map(([nome, f]) => `<tr><th>${nome}</th><td>${f(price)}</td><td>${f(sac)}</td></tr>`)
       .join('');
 
+    renderizarValores(p);
+
     $('tabela').innerHTML = r.tabela
       .map(
         (l) =>
@@ -99,6 +101,46 @@
 
     desenharGrafico(price, sac, r.renda.parcelaMaximaPermitida);
   }
+
+  let linhasValores = [];
+
+  function renderizarValores(p) {
+    linhasValores = S.tabelaPorPrazos(p);
+    const sac = p.sistema === 'SAC';
+    $('nota-valores').textContent =
+      `Valor do bem ${brl.format(p.valorBem)}, entrada ${brl.format(p.entrada)}, ` +
+      `sistema ${sac ? 'SAC (mensalidade da 1ª à última parcela)' : 'Price (mensalidade fixa)'}. ` +
+      'Valor total do carro = entrada + todas as parcelas + custos pagos à vista.';
+
+    $('valores').innerHTML = linhasValores
+      .map((l) => {
+        const mensal = sac
+          ? `${brl.format(l.primeiraParcela)}<span class="sub">até ${brl.format(l.ultimaParcela)}</span>`
+          : brl.format(l.primeiraParcela);
+        const renda = `<span class="${l.aprovado ? '' : 'fora'}">${pct(l.comprometimento, 1)}</span>`;
+        return (
+          `<tr class="${l.prazoMeses === p.prazoMeses ? 'selecionado' : ''}">` +
+          `<th>${l.prazoMeses}x</th><td>${mensal}</td><td>${brl.format(l.totalJuros)}</td>` +
+          `<td>${brl.format(l.valorTotal)}</td><td>${renda}</td></tr>`
+        );
+      })
+      .join('');
+  }
+
+  function baixarCSV() {
+    const n = (v) => v.toFixed(2).replace('.', ',');
+    const linhas = [['Prazo (meses)', 'Mensalidade inicial', 'Mensalidade final', 'Juros totais', 'Valor total do carro', 'Comprometimento da renda (%)']];
+    linhasValores.forEach((l) =>
+      linhas.push([l.prazoMeses, n(l.primeiraParcela), n(l.ultimaParcela), n(l.totalJuros), n(l.valorTotal), n(l.comprometimento * 100)])
+    );
+    const csv = '﻿' + linhas.map((r) => r.join(';')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'tabela-financiamento.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  $('baixar-csv').addEventListener('click', baixarCSV);
 
   function desenharGrafico(price, sac, limite) {
     const cv = $('grafico');

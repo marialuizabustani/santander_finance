@@ -267,8 +267,39 @@
     };
   }
 
+  const PRAZOS_PADRAO = [12, 18, 24, 36, 48, 60, 72];
+
+  /**
+   * Tabela de valores: simula o mesmo financiamento em vários prazos.
+   * Cada linha traz a mensalidade, o total de juros e o valor total do carro
+   * (entrada + parcelas + custos pagos à vista).
+   */
+  function tabelaPorPrazos(entrada, prazos) {
+    const lista = (prazos && prazos.length ? prazos : PRAZOS_PADRAO).slice();
+    if (entrada && Number.isInteger(entrada.prazoMeses) && !lista.includes(entrada.prazoMeses)) {
+      lista.push(entrada.prazoMeses);
+    }
+    lista.sort((a, b) => a - b);
+    return lista.map((prazoMeses) => {
+      const r = simular(Object.assign({}, entrada, { prazoMeses }));
+      return {
+        prazoMeses,
+        primeiraParcela: r.primeiraParcela,
+        ultimaParcela: r.ultimaParcela,
+        totalJuros: r.totalJuros,
+        totalParcelas: r.totalParcelas,
+        valorTotal: r.custoTotal,
+        cetAnual: r.cetAnual,
+        comprometimento: r.renda.comprometimento,
+        aprovado: r.aprovado,
+      };
+    });
+  }
+
   return {
     SISTEMAS,
+    PRAZOS_PADRAO,
+    tabelaPorPrazos,
     IOF_DIARIO_PF,
     IOF_ADICIONAL,
     anualParaMensal,

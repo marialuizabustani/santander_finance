@@ -98,3 +98,18 @@ test('validação de entradas', () => {
   assert.throws(() => S.simular({ ...base, rendaMensal: 0 }), /Renda/);
   assert.throws(() => S.simular({ ...base, prazoMeses: 1.5 }), /Prazo/);
 });
+
+test('tabela de valores por prazo', () => {
+  const linhas = S.tabelaPorPrazos({ ...base, prazoMeses: 30 });
+  assert.deepEqual(linhas.map((l) => l.prazoMeses), [12, 18, 24, 30, 36, 48, 60, 72]);
+  const l12 = linhas[0];
+  perto(l12.primeiraParcela, 7107.90);
+  perto(l12.totalJuros, 7107.90 * 12 - 80000, 0.1);
+  perto(l12.valorTotal, 20000 + 7107.90 * 12, 0.1);
+  // prazos maiores: mensalidade menor, juros e valor total maiores
+  for (let i = 1; i < linhas.length; i++) {
+    assert.ok(linhas[i].primeiraParcela < linhas[i - 1].primeiraParcela);
+    assert.ok(linhas[i].totalJuros > linhas[i - 1].totalJuros);
+    assert.ok(linhas[i].valorTotal > linhas[i - 1].valorTotal);
+  }
+});

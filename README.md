@@ -42,6 +42,7 @@ npm test
 - **Análise de renda**: % comprometido, parcela máxima permitida, renda mínima necessária e
   valor máximo financiável pela renda
 - Situação (dentro dos critérios / pendências) e comparativo SAC × Price
+- **Tabela de valores por prazo** (12 a 72x + o prazo escolhido): mensalidade, juros totais e valor total do carro, com exportação CSV
 - Gráfico da evolução das parcelas e tabela de amortização completa
 
 ## Estrutura
