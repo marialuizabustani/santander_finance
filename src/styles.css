@@ -1,36 +1,36 @@
+/*
+ * Paleta oficial do guia de marca Santander ("Basic guidelines", 2. Color palette).
+ * Fundos permitidos pelo guia: White, Lisbon, Rio e Santander Red.
+ * O guia não define tema escuro, então a página usa sempre o tema claro.
+ */
 :root {
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --text: #1c2430;
-  --muted: #5b6676;
-  --border: #d9dee5;
-  --grid: #e7eaef;
-  --accent: #1f5fbf;
-  --ok-bg: #e6f4ea;
-  --ok-fg: #1e6b34;
-  --warn-bg: #fdf1e3;
-  --warn-fg: #8a4b0f;
-  --price: #1f5fbf;
-  --sac: #2a9d6f;
-  --limite: #c0392b;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #12161c;
-    --surface: #1b2129;
-    --text: #e6eaf0;
-    --muted: #9aa5b4;
-    --border: #2f3843;
-    --grid: #262e38;
-    --accent: #6ea2ff;
-    --ok-bg: #173323;
-    --ok-fg: #8fe0a9;
-    --warn-bg: #3a2a16;
-    --warn-fg: #f3c58b;
-    --price: #6ea2ff;
-    --sac: #5fd3a3;
-    --limite: #ff7b6b;
-  }
+  --santander-red: #ec0000; /* Santander Red* (Pantone 485 C) */
+  --boston: #cc0000;        /* Pantone 3620 C */
+  --london: #990000;        /* Pantone 7622 C */
+  --madrid: #ea6f5d;        /* Pantone 2030 C */
+  --mexico-city: #f0b998;   /* Pantone 6023 C */
+  --rio: #f5decf;           /* Rio* (Pantone 4031 C) */
+  --lisbon: #fbf1ea;        /* Lisbon* (Pantone 9021 C) */
+  --white: #ffffff;
+  --black: #000000;
+
+  color-scheme: light;
+  --bg: var(--lisbon);
+  --surface: var(--white);
+  --text: #222222;
+  --muted: #666666;
+  --border: #e8d5c8;
+  --grid: #f1e4da;
+  --accent: var(--santander-red);
+  --accent-hover: var(--boston);
+  --ok-bg: #e9f5ec;
+  --ok-fg: #1d6b35;
+  --warn-bg: var(--rio);
+  --warn-fg: var(--london);
+  --selecionado: var(--rio);
+  --price: var(--santander-red);
+  --sac: var(--madrid);
+  --limite: var(--black);
 }
 
 * { box-sizing: border-box; }
@@ -40,7 +40,7 @@ body {
   background: var(--bg);
   color: var(--text);
 }
-header { padding: 24px 16px 8px; max-width: 1200px; margin: 0 auto; }
+header { padding: 16px 16px 8px; max-width: 1200px; margin: 0 auto; }
 header h1 { margin: 0 0 4px; font-size: 1.6rem; }
 header p { margin: 0; color: var(--muted); }
 
@@ -104,7 +104,7 @@ button.secundario {
   border: 1px solid var(--accent); font-weight: 500;
 }
 .nota { color: var(--muted); font-size: 0.85rem; margin: 6px 0 8px; }
-.valores tr.selecionado td, .valores tr.selecionado th { background: var(--ok-bg); font-weight: 600; }
+.valores tr.selecionado td, .valores tr.selecionado th { background: var(--selecionado); font-weight: 600; }
 .valores .sub { display: block; font-size: 0.78rem; color: var(--muted); font-weight: 400; }
 .valores .fora { color: var(--warn-fg); }
 details { margin-top: 20px; }
@@ -160,7 +160,7 @@ canvas { margin-top: 12px; }
   .valores thead { display: none; }
   .valores, .valores tbody, .valores tr, .valores th, .valores td { display: block; width: 100%; }
   .valores tr { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
-  .valores tr.selecionado { border-color: var(--ok-fg); background: var(--ok-bg); }
+  .valores tr.selecionado { border-color: var(--accent); background: var(--selecionado); }
   .valores th, .valores td { border: 0; text-align: left; padding: 3px 0; background: transparent !important; }
   .valores th { font-size: 1.05rem; display: flex; align-items: baseline; gap: 8px; }
   .valores th .sub { display: inline; }
@@ -202,4 +202,34 @@ canvas { margin-top: 12px; }
   .abas { grid-template-columns: 1fr; }
   .abas button { flex-direction: row; justify-content: space-between; align-items: baseline; }
   .escolhas { grid-template-columns: 1fr; }
+}
+
+/* ---- Marca Santander ---- */
+.barra-marca { background: var(--white); border-bottom: 1px solid var(--border); }
+.barra-marca-conteudo {
+  max-width: 1200px; margin: 0 auto; padding: 14px 16px;
+  display: flex; align-items: center; gap: 16px;
+}
+/* área de proteção: no mínimo meia largura do símbolo ao redor do logo */
+.barra-marca .logo { display: block; height: 32px; width: auto; margin: 4px 0; }
+.barra-marca .divisor { width: 1px; align-self: stretch; background: var(--border); }
+.barra-marca .produto { font-size: 0.95rem; color: var(--muted); }
+header h1 { color: var(--text); }
+header h1 span { color: var(--accent); }
+button[type=submit], .abas button[aria-selected=true] { background: var(--accent); }
+button[type=submit]:hover { background: var(--accent-hover); }
+button.secundario:hover { background: var(--lisbon); }
+.abas button:hover:not([aria-selected=true]) { border-color: var(--accent); }
+.passo { background: var(--accent); }
+.destaque-valor { color: var(--accent); }
+.intro-aba { border-left-color: var(--accent); }
+.conclusao { background: var(--lisbon); }
+label.opcao:has(input:checked) { background: var(--lisbon); }
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+input[type=radio], input[type=checkbox] { accent-color: var(--accent); }
+@media (max-width: 520px) {
+  .barra-marca .logo { height: 25px; } /* tamanho mínimo do guia: 25px */
+  .barra-marca .produto { font-size: 0.85rem; }
 }

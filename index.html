@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simulador de Financiamento</title>
+  <title>Simulador de Veículos | Santander</title>
+  <link rel="icon" type="image/png" href="assets/santander-simbolo.png" />
   <link rel="stylesheet" href="src/styles.css" />
 </head>
 <body>
+  <div class="barra-marca">
+    <div class="barra-marca-conteudo">
+      <img class="logo" src="assets/santander-logo.png" alt="Santander" width="183" height="32" />
+      <span class="divisor" aria-hidden="true"></span>
+      <span class="produto">Simulador de Veículos</span>
+    </div>
+  </div>
   <header>
-    <h1>Simulador de Carro: financiar ou alugar?</h1>
+    <h1>Carro: <span>financiar ou alugar?</span></h1>
     <p>Escolha uma opção, preencha os campos e descubra quanto vai pagar por mês e quanto vai gastar no total.</p>
   </header>
 
@@ -137,7 +145,7 @@
         <h2>E se eu mudar o número de meses?</h2>
         <button type="button" id="baixar-csv" class="secundario">Baixar tabela</button>
       </div>
-      <p class="nota">A linha verde é a sua escolha. Repare: menos meses = parcela maior, mas o carro sai mais barato no final.</p>
+      <p class="nota">A linha destacada é a sua escolha. Repare: menos meses = parcela maior, mas o carro sai mais barato no final.</p>
       <div class="tabela-wrap livre">
         <table class="valores">
           <thead>
@@ -309,7 +317,7 @@
         <h2>E se eu mudar o número de meses?</h2>
         <button type="button" id="l-baixar-csv" class="secundario">Baixar tabela</button>
       </div>
-      <p class="nota">A linha verde é a sua escolha.</p>
+      <p class="nota">A linha destacada é a sua escolha.</p>
       <div class="tabela-wrap livre">
         <table class="valores">
           <thead>

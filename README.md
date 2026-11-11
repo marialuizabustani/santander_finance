@@ -78,3 +78,16 @@ console.log(r.primeiraParcela, r.cetAnual, r.aprovado, r.pendencias);
 ```
 
 > Simulação ilustrativa. Taxas, tarifas e aprovação de crédito reais dependem da análise da instituição financeira.
+
+## Identidade visual
+
+A página segue o guia de marca Santander ("Basic guidelines"):
+
+- **Cores:** paleta primária oficial em `src/styles.css`: Santander Red `#EC0000`, Boston `#CC0000`,
+  London `#990000`, Madrid `#EA6F5D`, Rio `#F5DECF`, Lisbon `#FBF1EA`. Só White, Lisbon, Rio e
+  Santander Red são usados como fundo, como o guia determina. O guia não define tema escuro, então a página é sempre clara.
+- **Logo:** versão principal positiva no topo (32px; 25px no celular, que é o mínimo do guia) e
+  símbolo como ícone da aba. Os arquivos em `assets/` foram extraídos do PDF do guia. Para qualidade
+  máxima, substitua pelas artes-finais oficiais (`AF_SANTANDER_PV_POS_RGB.PNG` e
+  `AF_SANTANDER_SY_POS_RGB.PNG`) mantendo os mesmos nomes de arquivo.
+- **Fonte:** o guia básico não especifica tipografia; a página usa a fonte do sistema.
