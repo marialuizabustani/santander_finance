@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulador de Financiamento</title>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Simulador de Financiamento</h1>
+    <p>Compare SAC e Price, veja o custo efetivo total e quanto da sua renda a parcela compromete.</p>
+  </header>
+
+  <main>
+    <form id="form" novalidate>
+      <fieldset>
+        <legend>Bem e crédito</legend>
+        <label>Valor do bem (R$)
+          <input name="valorBem" type="text" inputmode="decimal" value="80.000,00" required />
+        </label>
+        <label>Entrada (R$)
+          <input name="entrada" type="text" inputmode="decimal" value="20.000,00" />
+        </label>
+        <label>Prazo (meses)
+          <input name="prazoMeses" type="number" min="1" max="420" step="1" value="48" required />
+        </label>
+        <div class="linha">
+          <label>Taxa de juros (%)
+            <input name="taxa" type="text" inputmode="decimal" value="1,79" required />
+          </label>
+          <label>Período
+            <select name="taxaPeriodo">
+              <option value="mensal" selected>ao mês</option>
+              <option value="anual">ao ano</option>
+            </select>
+          </label>
+        </div>
+        <fieldset class="radios">
+          <legend>Tipo de amortização</legend>
+          <label><input type="radio" name="sistema" value="PRICE" checked /> Price (parcelas fixas)</label>
+          <label><input type="radio" name="sistema" value="SAC" /> SAC (parcelas decrescentes)</label>
+        </fieldset>
+      </fieldset>
+
+      <fieldset>
+        <legend>Renda do proponente</legend>
+        <label>Renda mensal bruta (R$)
+          <input name="rendaMensal" type="text" inputmode="decimal" value="7.000,00" required />
+        </label>
+        <label>Renda complementar – cônjuge/coobrigado (R$)
+          <input name="rendaComplementar" type="text" inputmode="decimal" value="0,00" />
+        </label>
+        <div class="linha">
+          <label>Comprometimento máx. (%)
+            <input name="limiteComprometimento" type="text" inputmode="decimal" value="30" />
+          </label>
+          <label>Entrada mínima (%)
+            <input name="entradaMinimaPct" type="text" inputmode="decimal" value="20" />
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Custos da operação</legend>
+        <div class="linha">
+          <label>Tarifa de cadastro (R$)
+            <input name="tarifaCadastro" type="text" inputmode="decimal" value="850,00" />
+          </label>
+          <label>Registro de contrato (R$)
+            <input name="registroContrato" type="text" inputmode="decimal" value="250,00" />
+          </label>
+        </div>
+        <div class="linha">
+          <label>Seguro prestamista (R$)
+            <input name="seguro" type="text" inputmode="decimal" value="0,00" />
+          </label>
+          <label>Outras despesas (R$)
+            <input name="outrasDespesas" type="text" inputmode="decimal" value="0,00" />
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" name="cobrarIOF" checked /> Cobrar IOF (pessoa física)</label>
+        <label class="check"><input type="checkbox" name="financiarCustos" checked /> Incluir IOF e tarifas no financiamento</label>
+      </fieldset>
+
+      <button type="submit">Simular</button>
+      <p id="erros" class="erros" role="alert"></p>
+    </form>
+
+    <section id="resultado" hidden aria-live="polite">
+      <div id="status" class="status"></div>
+
+      <div class="cards">
+        <div class="card"><span>1ª parcela</span><strong id="r-primeira"></strong></div>
+        <div class="card"><span>Última parcela</span><strong id="r-ultima"></strong></div>
+        <div class="card"><span>Valor financiado</span><strong id="r-financiado"></strong></div>
+        <div class="card"><span>CET</span><strong id="r-cet"></strong></div>
+      </div>
+
+      <h2>Resumo</h2>
+      <dl id="resumo" class="resumo"></dl>
+
+      <h2>Comparativo SAC × Price</h2>
+      <table class="comparativo">
+        <thead><tr><th></th><th>Price</th><th>SAC</th></tr></thead>
+        <tbody id="comparativo"></tbody>
+      </table>
+
+      <h2>Evolução das parcelas</h2>
+      <canvas id="grafico" height="220"></canvas>
+
+      <details>
+        <summary>Tabela de amortização</summary>
+        <div class="tabela-wrap">
+          <table>
+            <thead><tr><th>Mês</th><th>Parcela</th><th>Juros</th><th>Amortização</th><th>Saldo devedor</th></tr></thead>
+            <tbody id="tabela"></tbody>
+          </table>
+        </div>
+      </details>
+
+      <p class="aviso">Simulação ilustrativa. Taxas, tarifas e aprovação de crédito dependem da análise da instituição financeira.</p>
+    </section>
+  </main>
+
+  <script src="src/simulador.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
