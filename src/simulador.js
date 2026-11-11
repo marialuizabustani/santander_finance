@@ -20,6 +20,8 @@
 
   const SISTEMAS = { PRICE: 'PRICE', SAC: 'SAC' };
 
+  const pctBR = (v, casas = 1) => (v * 100).toFixed(casas).replace('.', ',') + '%';
+
   /** Converte taxa anual efetiva em mensal equivalente (juros compostos). */
   function anualParaMensal(taxaAnual) {
     return Math.pow(1 + taxaAnual, 1 / 12) - 1;
@@ -224,14 +226,14 @@
     const pendencias = [];
     if (comprometimento > p.limiteComprometimento) {
       pendencias.push(
-        `A maior parcela compromete ${(comprometimento * 100).toFixed(1)}% da renda ` +
-          `(limite ${(p.limiteComprometimento * 100).toFixed(0)}%).`
+        `A parcela compromete ${pctBR(comprometimento)} da sua renda. ` +
+          `O recomendado é no máximo ${pctBR(p.limiteComprometimento, 0)}.`
       );
     }
     if (entradaPct + 1e-9 < p.entradaMinimaPct) {
       pendencias.push(
-        `Entrada de ${(entradaPct * 100).toFixed(1)}% abaixo do mínimo de ` +
-          `${(p.entradaMinimaPct * 100).toFixed(0)}%.`
+        `Entrada de ${pctBR(entradaPct)} do valor do carro. ` +
+          `Normalmente se pede pelo menos ${pctBR(p.entradaMinimaPct, 0)}.`
       );
     }
 

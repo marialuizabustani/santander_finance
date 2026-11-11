@@ -1,6 +1,7 @@
 # Simulador de Financiamento
 
-Simulador web (HTML + JavaScript puro, sem dependências) para financiamento de veículos/imóveis,
+Simulador web (HTML + JavaScript puro, sem dependências) para financiamento de carros, escrito em
+linguagem simples para quem não entende de finanças,
 com comparativo SAC × Price, IOF, tarifas, CET e análise de comprometimento de renda.
 
 ## Como usar

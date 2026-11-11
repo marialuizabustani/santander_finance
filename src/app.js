@@ -37,59 +37,76 @@
     };
   }
 
-  function linha(dt, dd) {
-    return `<dt>${dt}</dt><dd>${dd}</dd>`;
-  }
+  const linha = (dt, dd) => `<dt>${dt}</dt><dd>${dd}</dd>`;
+  let linhasValores = [];
 
   function renderizar(r, outro) {
     const p = r.parametros;
+    const sac = p.sistema === 'SAC';
     $('resultado').hidden = false;
+    linhasValores = S.tabelaPorPrazos(p);
 
+    // Destaque em linguagem simples
+    if (sac) {
+      $('d-parcela').textContent = `${p.prazoMeses} parcelas de ${brl.format(r.primeiraParcela)} a ${brl.format(r.ultimaParcela)}`;
+      $('d-detalhe').textContent = `A primeira parcela é de ${brl.format(r.primeiraParcela)} e elas diminuem um pouco a cada mês, até ${brl.format(r.ultimaParcela)}.`;
+    } else {
+      $('d-parcela').textContent = `${p.prazoMeses}x de ${brl.format(r.primeiraParcela)}`;
+      $('d-detalhe').textContent = `São ${p.prazoMeses} parcelas iguais, uma por mês (${anos(p.prazoMeses)}).`;
+    }
+
+    // Cabe no bolso?
     const st = $('status');
-    st.className = 'status ' + (r.aprovado ? 'ok' : 'alerta');
-    st.innerHTML = r.aprovado
-      ? '<strong>Dentro dos critérios.</strong> A parcela cabe na renda e a entrada atende ao mínimo.'
-      : '<strong>Atenção:</strong><ul>' + r.pendencias.map((x) => `<li>${x}</li>`).join('') + '</ul>';
+    const rendaPct = pct(r.renda.comprometimento, 0);
+    if (r.aprovado) {
+      st.className = 'status ok';
+      st.innerHTML = `<strong>✓ A parcela cabe no seu salário.</strong> Ela usa ${rendaPct} da sua renda, dentro do que os bancos costumam aceitar.`;
+    } else {
+      st.className = 'status alerta';
+      st.innerHTML =
+        '<strong>⚠ Atenção, o banco pode recusar:</strong><ul>' +
+        r.pendencias.map((x) => `<li>${x}</li>`).join('') +
+        '</ul>' + sugestoes(r);
+    }
 
-    $('r-primeira').textContent = brl.format(r.primeiraParcela);
-    $('r-ultima').textContent = brl.format(r.ultimaParcela);
-    $('r-financiado').textContent = brl.format(r.valorFinanciado);
-    $('r-cet').textContent = `${pct(r.cetMensal)} a.m. · ${pct(r.cetAnual)} a.a.`;
-
-    $('resumo').innerHTML = [
-      linha('Sistema de amortização', p.sistema === 'SAC' ? 'SAC' : 'Price'),
-      linha('Taxa de juros', `${pct(r.taxaMensal)} a.m. · ${pct(r.taxaAnual)} a.a.`),
-      linha('Entrada', `${brl.format(p.entrada)} (${pct(r.entradaPct, 1)})`),
-      linha('Crédito para o bem', brl.format(r.valorLiquido)),
-      linha('Tarifas e seguros', brl.format(r.tarifas)),
-      linha('IOF', brl.format(r.iof)),
-      linha('Custos pagos à vista', brl.format(r.custosAVista)),
-      linha('Total de juros', brl.format(r.totalJuros)),
-      linha('Total das parcelas', brl.format(r.totalParcelas)),
-      linha('Custo total (entrada + parcelas + custos)', brl.format(r.custoTotal)),
-      linha('Renda considerada', brl.format(r.renda.rendaTotal)),
-      linha('Comprometimento da renda (maior parcela)', pct(r.renda.comprometimento, 1)),
-      linha('Parcela máxima permitida', brl.format(r.renda.parcelaMaximaPermitida)),
-      linha('Renda mínima necessária', brl.format(r.renda.rendaMinimaNecessaria)),
-      linha('Valor máximo financiável pela renda', brl.format(r.renda.valorMaximoFinanciavel)),
-    ].join('');
-
-    const price = p.sistema === 'PRICE' ? r : outro;
-    const sac = p.sistema === 'SAC' ? r : outro;
-    const comp = [
-      ['1ª parcela', (x) => brl.format(x.primeiraParcela)],
-      ['Última parcela', (x) => brl.format(x.ultimaParcela)],
-      ['Total de juros', (x) => brl.format(x.totalJuros)],
-      ['Total pago', (x) => brl.format(x.totalParcelas)],
-      ['CET a.a.', (x) => pct(x.cetAnual)],
-      ['Comprometimento', (x) => pct(x.renda.comprometimento, 1)],
-      ['Situação', (x) => (x.aprovado ? 'OK' : 'Pendente')],
-    ];
-    $('comparativo').innerHTML = comp
-      .map(([nome, f]) => `<tr><th>${nome}</th><td>${f(price)}</td><td>${f(sac)}</td></tr>`)
-      .join('');
+    const extra = r.custoTotal - p.valorBem;
+    $('c-preco').textContent = brl.format(p.valorBem);
+    $('c-juros').textContent = brl.format(r.totalJuros);
+    $('c-total').innerHTML = `${brl.format(r.custoTotal)}<small>${brl.format(extra)} a mais que à vista</small>`;
 
     renderizarValores(p);
+
+    const price = sac ? outro : r;
+    const sacR = sac ? r : outro;
+    const comp = [
+      ['Primeira parcela', (x) => brl.format(x.primeiraParcela)],
+      ['Última parcela', (x) => brl.format(x.ultimaParcela)],
+      ['Total de juros', (x) => brl.format(x.totalJuros)],
+      ['Custo total do carro', (x) => brl.format(x.custoTotal)],
+      ['Cabe no salário?', (x) => (x.aprovado ? '✓ Sim' : '✗ Não')],
+    ];
+    $('comparativo').innerHTML = comp
+      .map(([nome, f]) => `<tr><th>${nome}</th><td>${f(price)}</td><td>${f(sacR)}</td></tr>`)
+      .join('');
+
+    $('resumo').innerHTML = [
+      linha('Preço do carro', brl.format(p.valorBem)),
+      linha('Entrada', `${brl.format(p.entrada)} (${pct(r.entradaPct, 0)} do preço)`),
+      linha('Quanto falta pagar do carro', brl.format(r.valorLiquido)),
+      linha('Taxas do banco (cadastro, registro, seguro)', brl.format(r.tarifas)),
+      linha('Imposto (IOF)', brl.format(r.iof)),
+      linha('Pago na hora em taxas e imposto', brl.format(r.custosAVista)),
+      linha('Valor total emprestado pelo banco', brl.format(r.valorFinanciado)),
+      linha('Taxa de juros', `${pct(r.taxaMensal)} por mês (${pct(r.taxaAnual)} por ano)`),
+      linha('Custo real do financiamento (CET)', `${pct(r.cetMensal)} por mês (${pct(r.cetAnual)} por ano)`),
+      linha('Total de juros', brl.format(r.totalJuros)),
+      linha('Soma de todas as parcelas', brl.format(r.totalParcelas)),
+      linha('Custo total do carro', brl.format(r.custoTotal)),
+      linha('Sua renda considerada', brl.format(r.renda.rendaTotal)),
+      linha('Parte do salário usada pela parcela', pct(r.renda.comprometimento, 1)),
+      linha('Maior parcela que cabe no seu salário', brl.format(r.renda.parcelaMaximaPermitida)),
+      linha('Salário mínimo necessário para esta parcela', brl.format(r.renda.rendaMinimaNecessaria)),
+    ].join('');
 
     $('tabela').innerHTML = r.tabela
       .map(
@@ -99,29 +116,77 @@
       )
       .join('');
 
-    desenharGrafico(price, sac, r.renda.parcelaMaximaPermitida);
+    desenharGrafico(price, sacR, r.renda.parcelaMaximaPermitida);
   }
 
-  let linhasValores = [];
+  function anos(meses) {
+    const a = Math.floor(meses / 12);
+    const m = meses % 12;
+    const partes = [];
+    if (a) partes.push(`${a} ${a === 1 ? 'ano' : 'anos'}`);
+    if (m) partes.push(`${m} ${m === 1 ? 'mês' : 'meses'}`);
+    return partes.join(' e ');
+  }
+
+  /** Dicas práticas quando a simulação não fecha. */
+  function sugestoes(r) {
+    const p = r.parametros;
+    const dicas = [];
+    const prazoOk = linhasValores.find((l) => l.prazoMeses > p.prazoMeses && l.aprovado);
+    if (r.renda.comprometimento > p.limiteComprometimento) {
+      if (prazoOk) dicas.push(`pagar em <strong>${prazoOk.prazoMeses} meses</strong> (parcela de ${brl.format(prazoOk.primeiraParcela)})`);
+      const entradaSugerida = entradaQueCabe(p);
+      if (entradaSugerida !== null)
+        dicas.push(`dar uma entrada de pelo menos <strong>${brl.format(entradaSugerida)}</strong>`);
+      if (p.sistema === 'SAC') dicas.push('escolher <strong>parcelas iguais</strong>, que começam menores');
+      dicas.push(`incluir a renda de alguém que ajude a pagar (é preciso uma renda de ${brl.format(r.renda.rendaMinimaNecessaria)})`);
+    }
+    if (r.entradaPct + 1e-9 < p.entradaMinimaPct) {
+      dicas.push(`aumentar a entrada para pelo menos <strong>${brl.format(r.entradaMinima)}</strong>`);
+    }
+    return dicas.length ? '<p class="dicas-titulo">O que você pode fazer:</p><ul>' + dicas.map((d) => `<li>${d}</li>`).join('') + '</ul>' : '';
+  }
+
+  /** Menor entrada (arredondada para cima em R$ 100) que faz a parcela caber na renda. */
+  function entradaQueCabe(p) {
+    const cabe = (entrada) => {
+      try {
+        const r = S.simular(Object.assign({}, p, { entrada }));
+        return r.renda.comprometimento <= p.limiteComprometimento;
+      } catch (e) {
+        return false;
+      }
+    };
+    let lo = p.entrada;
+    let hi = p.valorBem - 1;
+    if (!cabe(hi)) return null;
+    for (let i = 0; i < 60; i++) {
+      const mid = (lo + hi) / 2;
+      if (cabe(mid)) hi = mid;
+      else lo = mid;
+    }
+    const arredondado = Math.ceil(hi / 100) * 100;
+    return arredondado < p.valorBem ? arredondado : null;
+  }
 
   function renderizarValores(p) {
-    linhasValores = S.tabelaPorPrazos(p);
     const sac = p.sistema === 'SAC';
-    $('nota-valores').textContent =
-      `Valor do bem ${brl.format(p.valorBem)}, entrada ${brl.format(p.entrada)}, ` +
-      `sistema ${sac ? 'SAC (mensalidade da 1ª à última parcela)' : 'Price (mensalidade fixa)'}. ` +
-      'Valor total do carro = entrada + todas as parcelas + custos pagos à vista.';
-
     $('valores').innerHTML = linhasValores
       .map((l) => {
         const mensal = sac
-          ? `${brl.format(l.primeiraParcela)}<span class="sub">até ${brl.format(l.ultimaParcela)}</span>`
+          ? `${brl.format(l.primeiraParcela)}<span class="sub">caindo até ${brl.format(l.ultimaParcela)}</span>`
           : brl.format(l.primeiraParcela);
-        const renda = `<span class="${l.aprovado ? '' : 'fora'}">${pct(l.comprometimento, 1)}</span>`;
+        const cabe =
+          '<span>' +
+          (l.aprovado ? '<span class="sim">✓ Sim</span>' : '<span class="fora">✗ Não</span>') +
+          `<span class="sub">${pct(l.comprometimento, 0)} da renda</span></span>`;
         return (
           `<tr class="${l.prazoMeses === p.prazoMeses ? 'selecionado' : ''}">` +
-          `<th>${l.prazoMeses}x</th><td>${mensal}</td><td>${brl.format(l.totalJuros)}</td>` +
-          `<td>${brl.format(l.valorTotal)}</td><td>${renda}</td></tr>`
+          `<th>${l.prazoMeses}x<span class="sub">${anos(l.prazoMeses)}</span></th>` +
+          `<td data-rotulo="Parcela por mês">${mensal}</td>` +
+          `<td data-rotulo="Total de juros">${brl.format(l.totalJuros)}</td>` +
+          `<td data-rotulo="Custo total do carro">${brl.format(l.valorTotal)}</td>` +
+          `<td data-rotulo="Cabe no salário?">${cabe}</td></tr>`
         );
       })
       .join('');
@@ -129,9 +194,9 @@
 
   function baixarCSV() {
     const n = (v) => v.toFixed(2).replace('.', ',');
-    const linhas = [['Prazo (meses)', 'Mensalidade inicial', 'Mensalidade final', 'Juros totais', 'Valor total do carro', 'Comprometimento da renda (%)']];
+    const linhas = [['Meses', 'Primeira parcela', 'Última parcela', 'Total de juros', 'Custo total do carro', 'Parte do salário (%)', 'Cabe no salário?']];
     linhasValores.forEach((l) =>
-      linhas.push([l.prazoMeses, n(l.primeiraParcela), n(l.ultimaParcela), n(l.totalJuros), n(l.valorTotal), n(l.comprometimento * 100)])
+      linhas.push([l.prazoMeses, n(l.primeiraParcela), n(l.ultimaParcela), n(l.totalJuros), n(l.valorTotal), n(l.comprometimento * 100), l.aprovado ? 'Sim' : 'Não'])
     );
     const csv = '﻿' + linhas.map((r) => r.join(';')).join('\n');
     const a = document.createElement('a');
@@ -155,7 +220,7 @@
 
     const css = getComputedStyle(document.documentElement);
     const cor = (v) => css.getPropertyValue(v).trim();
-    const pad = { l: 70, r: 12, t: 12, b: 28 };
+    const pad = { l: 70, r: 12, t: w < 520 ? 60 : 28, b: 28 };
     const n = price.tabela.length;
     const max = Math.max(price.maiorParcela, sac.maiorParcela, limite) * 1.08;
     const x = (i) => pad.l + ((w - pad.l - pad.r) * (i - 1)) / Math.max(1, n - 1);
@@ -171,10 +236,10 @@
       ctx.moveTo(pad.l, y(v));
       ctx.lineTo(w - pad.r, y(v));
       ctx.stroke();
-      ctx.fillText(brl.format(v).replace(',00', ''), 4, y(v) + 4);
+      ctx.fillText(brl.format(Math.round(v)).replace(',00', ''), 4, y(v) + 4);
     }
-    ctx.fillText('mês 1', pad.l, h - 8);
-    ctx.fillText(`mês ${n}`, w - pad.r - 40, h - 8);
+    ctx.fillText('1º mês', pad.l, h - 8);
+    ctx.fillText(`${n}º mês`, w - pad.r - 44, h - 8);
 
     const serie = (tab, c) => {
       ctx.strokeStyle = c;
@@ -195,17 +260,23 @@
     ctx.setLineDash([]);
 
     const legenda = [
-      ['Price', cor('--price')],
-      ['SAC', cor('--sac')],
-      ['Limite de renda', cor('--limite')],
+      ['Parcelas iguais', cor('--price')],
+      ['Parcelas que diminuem', cor('--sac')],
+      ['Máximo para o seu salário', cor('--limite')],
     ];
-    let lx = pad.l + 8;
+    let lx = pad.l;
+    let ly = 6;
     legenda.forEach(([t, c]) => {
+      const largura = ctx.measureText(t).width + 30;
+      if (lx > pad.l && lx + largura > w) {
+        lx = pad.l;
+        ly += 16;
+      }
       ctx.fillStyle = c;
-      ctx.fillRect(lx, pad.t + 2, 10, 10);
+      ctx.fillRect(lx, ly, 10, 10);
       ctx.fillStyle = cor('--text');
-      ctx.fillText(t, lx + 14, pad.t + 11);
-      lx += ctx.measureText(t).width + 30;
+      ctx.fillText(t, lx + 14, ly + 9);
+      lx += largura;
     });
   }
 
@@ -217,10 +288,16 @@
       const r = S.simular(dados);
       const outro = S.simular(Object.assign({}, dados, { sistema: dados.sistema === 'SAC' ? 'PRICE' : 'SAC' }));
       renderizar(r, outro);
+      if (ev.submitter && window.innerWidth < 820) $('resultado').scrollIntoView({ behavior: 'smooth' });
     } catch (e) {
       $('resultado').hidden = true;
       $('erros').textContent = e.message;
     }
+  });
+
+  // Recalcula ao trocar opções de escolha, sem precisar clicar em "Calcular"
+  form.addEventListener('change', (ev) => {
+    if (ev.target.type === 'radio' || ev.target.type === 'checkbox' || ev.target.tagName === 'SELECT') form.requestSubmit();
   });
 
   form.requestSubmit();

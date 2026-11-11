@@ -110,3 +110,61 @@ button.secundario {
 details { margin-top: 20px; }
 summary { cursor: pointer; font-weight: 600; }
 .aviso { color: var(--muted); font-size: 0.85rem; margin-top: 20px; }
+
+/* ---- Linguagem simples ---- */
+header h1 { font-size: 1.7rem; }
+legend { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; color: var(--text); }
+.passo {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 0.85rem; font-weight: 700;
+}
+label { color: var(--text); font-weight: 500; }
+.dica { display: block; margin-top: 4px; color: var(--muted); font-weight: 400; font-size: 0.82rem; }
+.dica.bloco { margin: -4px 0 12px; }
+.radios { margin-top: 6px; }
+.radios legend { font-size: 0.95rem; font-weight: 500; }
+label.opcao {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; margin-bottom: 8px;
+  border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+}
+label.opcao:has(input:checked) { border-color: var(--accent); background: var(--bg); }
+label.opcao input { margin-top: 4px; }
+label.opcao small { display: block; color: var(--muted); font-weight: 400; font-size: 0.82rem; }
+details.avancado { margin: 0 0 16px; padding: 10px 12px; border: 1px dashed var(--border); border-radius: 8px; }
+details.avancado summary { margin-bottom: 4px; }
+details.avancado[open] summary { margin-bottom: 12px; }
+details.avancado summary small { color: var(--muted); font-weight: 400; }
+.sub-legenda { font-weight: 600; margin: 6px 0 8px; }
+.check { font-weight: 400; }
+button[type=submit] { font-size: 1.05rem; padding: 12px; }
+
+.destaque { text-align: center; padding: 8px 0 16px; }
+.destaque p { margin: 0; }
+.destaque-titulo { color: var(--muted); }
+.destaque-valor { font-size: 2rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.2; margin: 4px 0 !important; }
+.dicas-titulo { margin: 10px 0 0; font-weight: 600; }
+.card strong small { display: block; font-size: 0.78rem; font-weight: 400; color: var(--muted); }
+.card.forte { border-color: var(--accent); }
+.card.forte strong { color: var(--accent); }
+.valores .sim { color: var(--ok-fg); }
+canvas { margin-top: 12px; }
+.glossario dt { font-weight: 600; margin-top: 10px; }
+.glossario dd { margin: 2px 0 0; color: var(--muted); }
+@media (max-width: 520px) {
+  .linha { grid-template-columns: 1fr; gap: 0; }
+  .destaque-valor { font-size: 1.6rem; }
+  .valores th, .valores td { padding: 6px 4px; font-size: 0.85rem; }
+}
+.tabela-wrap.livre { max-height: none; }
+@media (max-width: 620px) {
+  .valores thead { display: none; }
+  .valores, .valores tbody, .valores tr, .valores th, .valores td { display: block; width: 100%; }
+  .valores tr { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
+  .valores tr.selecionado { border-color: var(--ok-fg); background: var(--ok-bg); }
+  .valores th, .valores td { border: 0; text-align: left; padding: 3px 0; background: transparent !important; }
+  .valores th { font-size: 1.05rem; display: flex; align-items: baseline; gap: 8px; }
+  .valores th .sub { display: inline; }
+  .valores td { display: flex; justify-content: space-between; gap: 12px; text-align: right; }
+  .valores td::before { content: attr(data-rotulo); color: var(--muted); font-weight: 400; text-align: left; }
+  .valores td .sub { display: inline; margin-left: 6px; }
+}

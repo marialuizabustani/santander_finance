@@ -8,138 +8,177 @@
 </head>
 <body>
   <header>
-    <h1>Simulador de Financiamento</h1>
-    <p>Compare SAC e Price, veja o custo efetivo total e quanto da sua renda a parcela compromete.</p>
+    <h1>Simulador de Financiamento de Carro</h1>
+    <p>Preencha os campos abaixo para descobrir quanto vai pagar por mês e quanto o carro vai custar no final.</p>
   </header>
 
   <main>
     <form id="form" novalidate>
       <fieldset>
-        <legend>Bem e crédito</legend>
-        <label>Valor do bem (R$)
+        <legend><span class="passo">1</span> Sobre o carro</legend>
+        <label>Qual o preço do carro?
           <input name="valorBem" type="text" inputmode="decimal" value="80.000,00" required />
+          <small class="dica">O preço à vista, em reais.</small>
         </label>
-        <label>Entrada (R$)
+        <label>Quanto você vai dar de entrada?
           <input name="entrada" type="text" inputmode="decimal" value="20.000,00" />
+          <small class="dica">Dinheiro que você paga na hora. Quanto maior a entrada, menor a dívida e os juros.</small>
         </label>
-        <label>Prazo (meses)
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="passo">2</span> Sobre o pagamento</legend>
+        <label>Em quantos meses quer pagar?
           <input name="prazoMeses" type="number" min="1" max="420" step="1" value="48" required />
+          <small class="dica">Ex.: 48 meses = 4 anos. Prazo maior deixa a parcela menor, mas você paga mais juros.</small>
         </label>
         <div class="linha">
           <label>Taxa de juros (%)
             <input name="taxa" type="text" inputmode="decimal" value="1,79" required />
           </label>
-          <label>Período
+          <label>A taxa é
             <select name="taxaPeriodo">
-              <option value="mensal" selected>ao mês</option>
-              <option value="anual">ao ano</option>
+              <option value="mensal" selected>por mês</option>
+              <option value="anual">por ano</option>
             </select>
           </label>
         </div>
+        <small class="dica bloco">É o "preço" do dinheiro emprestado. Peça essa informação à loja ou ao banco. Para carros, costuma ficar entre 1% e 2,5% por mês.</small>
+
         <fieldset class="radios">
-          <legend>Tipo de amortização</legend>
-          <label><input type="radio" name="sistema" value="PRICE" checked /> Price (parcelas fixas)</label>
-          <label><input type="radio" name="sistema" value="SAC" /> SAC (parcelas decrescentes)</label>
+          <legend>Como prefere as parcelas?</legend>
+          <label class="opcao">
+            <input type="radio" name="sistema" value="PRICE" checked />
+            <span><strong>Todas iguais</strong><small>Mais fácil de planejar. Também chamado de "tabela Price".</small></span>
+          </label>
+          <label class="opcao">
+            <input type="radio" name="sistema" value="SAC" />
+            <span><strong>Começam maiores e vão diminuindo</strong><small>No total, paga menos juros. Também chamado de "SAC".</small></span>
+          </label>
         </fieldset>
       </fieldset>
 
       <fieldset>
-        <legend>Renda do proponente</legend>
-        <label>Renda mensal bruta (R$)
+        <legend><span class="passo">3</span> Sobre você</legend>
+        <label>Quanto você ganha por mês?
           <input name="rendaMensal" type="text" inputmode="decimal" value="7.000,00" required />
+          <small class="dica">Seu salário bruto (antes dos descontos).</small>
         </label>
-        <label>Renda complementar – cônjuge/coobrigado (R$)
+        <label>Alguém vai ajudar a pagar? Quanto essa pessoa ganha?
           <input name="rendaComplementar" type="text" inputmode="decimal" value="0,00" />
+          <small class="dica">Ex.: marido, esposa ou outra pessoa que assina junto. Deixe 0 se for só você.</small>
         </label>
+      </fieldset>
+
+      <details class="avancado">
+        <summary>Opções avançadas <small>(pode deixar como está)</small></summary>
         <div class="linha">
-          <label>Comprometimento máx. (%)
+          <label>Parte máxima do salário para a parcela (%)
             <input name="limiteComprometimento" type="text" inputmode="decimal" value="30" />
           </label>
-          <label>Entrada mínima (%)
+          <label>Entrada mínima exigida (%)
             <input name="entradaMinimaPct" type="text" inputmode="decimal" value="20" />
           </label>
         </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Custos da operação</legend>
+        <small class="dica bloco">Os bancos costumam aceitar que a parcela use até 30% da renda.</small>
+        <p class="sub-legenda">Taxas cobradas pelo banco</p>
         <div class="linha">
-          <label>Tarifa de cadastro (R$)
+          <label>Taxa de cadastro (R$)
             <input name="tarifaCadastro" type="text" inputmode="decimal" value="850,00" />
           </label>
-          <label>Registro de contrato (R$)
+          <label>Registro do contrato (R$)
             <input name="registroContrato" type="text" inputmode="decimal" value="250,00" />
           </label>
         </div>
         <div class="linha">
-          <label>Seguro prestamista (R$)
+          <label>Seguro da dívida (R$)
             <input name="seguro" type="text" inputmode="decimal" value="0,00" />
           </label>
-          <label>Outras despesas (R$)
+          <label>Outros custos (R$)
             <input name="outrasDespesas" type="text" inputmode="decimal" value="0,00" />
           </label>
         </div>
-        <label class="check"><input type="checkbox" name="cobrarIOF" checked /> Cobrar IOF (pessoa física)</label>
-        <label class="check"><input type="checkbox" name="financiarCustos" checked /> Incluir IOF e tarifas no financiamento</label>
-      </fieldset>
+        <label class="check"><input type="checkbox" name="cobrarIOF" checked /> Incluir o imposto IOF (cobrado em todo empréstimo)</label>
+        <label class="check"><input type="checkbox" name="financiarCustos" checked /> Colocar taxas e imposto dentro das parcelas (em vez de pagar na hora)</label>
+      </details>
 
-      <button type="submit">Simular</button>
+      <button type="submit">Calcular</button>
       <p id="erros" class="erros" role="alert"></p>
     </form>
 
     <section id="resultado" hidden aria-live="polite">
+      <div class="destaque">
+        <p class="destaque-titulo">Você vai pagar</p>
+        <p class="destaque-valor" id="d-parcela"></p>
+        <p id="d-detalhe"></p>
+      </div>
+
       <div id="status" class="status"></div>
 
       <div class="cards">
-        <div class="card"><span>1ª parcela</span><strong id="r-primeira"></strong></div>
-        <div class="card"><span>Última parcela</span><strong id="r-ultima"></strong></div>
-        <div class="card"><span>Valor financiado</span><strong id="r-financiado"></strong></div>
-        <div class="card"><span>CET</span><strong id="r-cet"></strong></div>
+        <div class="card"><span>Preço do carro à vista</span><strong id="c-preco"></strong></div>
+        <div class="card"><span>Quanto vai pagar só de juros</span><strong id="c-juros"></strong></div>
+        <div class="card forte"><span>Quanto o carro vai custar no total</span><strong id="c-total"></strong></div>
       </div>
 
       <div class="titulo-acoes">
-        <h2>Tabela de valores por prazo</h2>
-        <button type="button" id="baixar-csv" class="secundario">Baixar CSV</button>
+        <h2>E se eu mudar o número de meses?</h2>
+        <button type="button" id="baixar-csv" class="secundario">Baixar tabela</button>
       </div>
-      <p class="nota" id="nota-valores"></p>
-      <div class="tabela-wrap">
+      <p class="nota">A linha verde é a sua escolha. Repare: menos meses = parcela maior, mas o carro sai mais barato no final.</p>
+      <div class="tabela-wrap livre">
         <table class="valores">
           <thead>
             <tr>
-              <th>Prazo</th>
-              <th>Mensalidade</th>
-              <th>Juros totais</th>
-              <th>Valor total do carro</th>
-              <th>Renda</th>
+              <th>Meses</th>
+              <th>Parcela por mês</th>
+              <th>Total de juros</th>
+              <th>Custo total do carro</th>
+              <th>Cabe no salário?</th>
             </tr>
           </thead>
           <tbody id="valores"></tbody>
         </table>
       </div>
 
-      <h2>Resumo</h2>
-      <dl id="resumo" class="resumo"></dl>
-
-      <h2>Comparativo SAC × Price</h2>
+      <h2>Parcelas iguais ou que diminuem?</h2>
       <table class="comparativo">
-        <thead><tr><th></th><th>Price</th><th>SAC</th></tr></thead>
+        <thead><tr><th></th><th>Todas iguais</th><th>Vão diminuindo</th></tr></thead>
         <tbody id="comparativo"></tbody>
       </table>
-
-      <h2>Evolução das parcelas</h2>
-      <canvas id="grafico" height="220"></canvas>
+      <canvas id="grafico" height="220" aria-label="Gráfico do valor das parcelas ao longo dos meses"></canvas>
 
       <details>
-        <summary>Tabela de amortização</summary>
+        <summary>Ver a conta em detalhes</summary>
+        <dl id="resumo" class="resumo"></dl>
+      </details>
+
+      <details>
+        <summary>Ver parcela por parcela</summary>
+        <p class="nota">Cada parcela tem uma parte de juros (o que o banco cobra) e uma parte que abate a dívida.</p>
         <div class="tabela-wrap">
           <table>
-            <thead><tr><th>Mês</th><th>Parcela</th><th>Juros</th><th>Amortização</th><th>Saldo devedor</th></tr></thead>
+            <thead><tr><th>Mês</th><th>Parcela</th><th>Juros</th><th>Abate da dívida</th><th>Ainda deve</th></tr></thead>
             <tbody id="tabela"></tbody>
           </table>
         </div>
       </details>
 
-      <p class="aviso">Simulação ilustrativa. Taxas, tarifas e aprovação de crédito dependem da análise da instituição financeira.</p>
+      <details>
+        <summary>Não entendi algum termo</summary>
+        <dl class="glossario">
+          <dt>Entrada</dt><dd>Parte do preço que você paga na hora, com seu dinheiro.</dd>
+          <dt>Juros</dt><dd>O valor que o banco cobra por emprestar o dinheiro. É o quanto você paga a mais.</dd>
+          <dt>Taxa de juros</dt><dd>A porcentagem de juros cobrada a cada mês (ou ano) sobre o que você ainda deve.</dd>
+          <dt>IOF</dt><dd>Imposto do governo cobrado em empréstimos e financiamentos.</dd>
+          <dt>CET (Custo Efetivo Total)</dt><dd>A taxa "de verdade" do financiamento, somando juros, impostos e taxas. Use para comparar ofertas de bancos diferentes: quanto menor, melhor.</dd>
+          <dt>Price</dt><dd>Forma de pagamento em que todas as parcelas têm o mesmo valor.</dd>
+          <dt>SAC</dt><dd>Forma de pagamento em que as parcelas começam maiores e diminuem a cada mês. No total, sai mais barato.</dd>
+          <dt>Comprometimento de renda</dt><dd>Quanto do seu salário vai para a parcela. Os bancos costumam aceitar até 30%.</dd>
+        </dl>
+      </details>
+
+      <p class="aviso">Isto é só uma simulação. Os valores reais dependem da análise do banco ou da financeira.</p>
     </section>
   </main>
 
