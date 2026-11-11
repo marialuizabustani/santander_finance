@@ -18,7 +18,15 @@ Testes do motor de cálculo:
 npm test
 ```
 
-## Variáveis de entrada
+## Abas
+
+| Aba | O que simula |
+|---|---|
+| **Financiar** (`#financiar`) | Financiamento tradicional com SAC ou Price, IOF, tarifas e CET |
+| **Alugar e comprar no final** (`#alugar-e-comprar`) | Leasing (arrendamento mercantil): parcelas + valor final para ficar com o carro, sem IOF, comparado com financiar |
+| **Alugar sem comprar** (`#assinatura`) | Carro por assinatura / locação de longo prazo (12 a 36 meses), comparado com comprar financiado + seguro, IPVA, manutenção e desvalorização |
+
+## Variáveis de entrada (aba Financiar)
 
 | Grupo | Campo | Descrição |
 |---|---|---|
@@ -50,7 +58,11 @@ npm test
 
 ```
 index.html            interface
-src/simulador.js      motor de cálculo (navegador e Node)
+src/simulador.js      motor de cálculo do financiamento (navegador e Node)
+src/alternativas.js   motor do leasing e da assinatura
+src/app-alternativas.js  telas do leasing e da assinatura
+src/abas.js           troca de abas
+src/util.js           formatação compartilhada
 src/app.js            ligação formulário ↔ motor, gráfico e tabelas
 src/styles.css        estilos (tema claro/escuro)
 tests/                testes com node:test

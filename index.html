@@ -8,11 +8,23 @@
 </head>
 <body>
   <header>
-    <h1>Simulador de Financiamento de Carro</h1>
-    <p>Preencha os campos abaixo para descobrir quanto vai pagar por mês e quanto o carro vai custar no final.</p>
+    <h1>Simulador de Carro: financiar ou alugar?</h1>
+    <p>Escolha uma opção, preencha os campos e descubra quanto vai pagar por mês e quanto vai gastar no total.</p>
   </header>
 
-  <main>
+  <nav class="abas" role="tablist" aria-label="Formas de ter um carro">
+    <button type="button" role="tab" id="aba-financiar" aria-controls="painel-financiar" data-hash="financiar">
+      <strong>Financiar</strong><small>o carro é seu</small>
+    </button>
+    <button type="button" role="tab" id="aba-leasing" aria-controls="painel-leasing" data-hash="alugar-e-comprar">
+      <strong>Alugar e comprar no final</strong><small>leasing</small>
+    </button>
+    <button type="button" role="tab" id="aba-assinatura" aria-controls="painel-assinatura" data-hash="assinatura">
+      <strong>Alugar sem comprar</strong><small>carro por assinatura</small>
+    </button>
+  </nav>
+
+  <main class="painel" id="painel-financiar" role="tabpanel" aria-labelledby="aba-financiar">
     <form id="form" novalidate>
       <fieldset>
         <legend><span class="passo">1</span> Sobre o carro</legend>
@@ -106,7 +118,7 @@
       <p id="erros" class="erros" role="alert"></p>
     </form>
 
-    <section id="resultado" hidden aria-live="polite">
+    <section class="resultado" id="resultado" hidden aria-live="polite">
       <div class="destaque">
         <p class="destaque-titulo">Você vai pagar</p>
         <p class="destaque-valor" id="d-parcela"></p>
@@ -182,7 +194,276 @@
     </section>
   </main>
 
+  <!-- ===================== ALUGAR E COMPRAR NO FINAL (LEASING) ===================== -->
+  <main class="painel" id="painel-leasing" role="tabpanel" aria-labelledby="aba-leasing" hidden>
+    <div class="intro-aba">
+      <strong>Como funciona:</strong> você usa o carro pagando parcelas, como num aluguel. No final do contrato,
+      escolhe se paga um valor combinado e <strong>fica com o carro</strong>, ou se devolve. Também é chamado de
+      <em>leasing</em>. Não tem cobrança de IOF, mas o carro fica no nome do banco até o fim e o seguro é obrigatório.
+    </div>
+    <form id="form-leasing" novalidate>
+      <fieldset>
+        <legend><span class="passo">1</span> Sobre o carro</legend>
+        <label>Qual o preço do carro?
+          <input name="valorBem" type="text" inputmode="decimal" value="80.000,00" required />
+          <small class="dica">O preço à vista, em reais.</small>
+        </label>
+        <label>Quanto você vai dar de entrada?
+          <input name="entrada" type="text" inputmode="decimal" value="16.000,00" />
+          <small class="dica">Pode ser zero. Quanto maior, menores as parcelas.</small>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="passo">2</span> Sobre o contrato</legend>
+        <label>Quantos meses de contrato?
+          <input name="prazoMeses" type="number" min="1" max="120" step="1" value="36" required />
+          <small class="dica">Costuma ser entre 24 e 60 meses.</small>
+        </label>
+        <div class="linha">
+          <label>Taxa de juros (%)
+            <input name="taxa" type="text" inputmode="decimal" value="1,59" required />
+          </label>
+          <label>A taxa é
+            <select name="taxaPeriodo">
+              <option value="mensal" selected>por mês</option>
+              <option value="anual">por ano</option>
+            </select>
+          </label>
+        </div>
+        <small class="dica bloco">Peça essa informação ao banco. Costuma ser um pouco menor que a do financiamento.</small>
+        <label>Quanto quer deixar para pagar no final? (% do preço)
+          <input name="residualPct" type="text" inputmode="decimal" value="30" />
+          <small class="dica">É o valor que você paga no fim para ficar com o carro. Quanto maior, menores as parcelas, mas você precisa ter esse dinheiro no final.</small>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="passo">3</span> Sobre você</legend>
+        <label>Quanto você ganha por mês?
+          <input name="rendaMensal" type="text" inputmode="decimal" value="7.000,00" required />
+          <small class="dica">Seu salário bruto (antes dos descontos).</small>
+        </label>
+        <label>Alguém vai ajudar a pagar? Quanto essa pessoa ganha?
+          <input name="rendaComplementar" type="text" inputmode="decimal" value="0,00" />
+          <small class="dica">Deixe 0 se for só você.</small>
+        </label>
+      </fieldset>
+
+      <details class="avancado">
+        <summary>Opções avançadas <small>(pode deixar como está)</small></summary>
+        <label>Parte máxima do salário para a parcela (%)
+          <input name="limiteComprometimento" type="text" inputmode="decimal" value="30" />
+        </label>
+        <p class="sub-legenda">Taxas cobradas pelo banco (entram nas parcelas)</p>
+        <div class="linha">
+          <label>Taxa de cadastro (R$)
+            <input name="tarifaCadastro" type="text" inputmode="decimal" value="850,00" />
+          </label>
+          <label>Registro do contrato (R$)
+            <input name="registroContrato" type="text" inputmode="decimal" value="250,00" />
+          </label>
+        </div>
+        <label>Outros custos (R$)
+          <input name="outrasDespesas" type="text" inputmode="decimal" value="0,00" />
+        </label>
+      </details>
+
+      <button type="submit">Calcular</button>
+      <p class="erros" id="l-erros" role="alert"></p>
+    </form>
+
+    <section class="resultado" id="l-resultado" hidden aria-live="polite">
+      <div class="destaque">
+        <p class="destaque-titulo">Você vai pagar</p>
+        <p class="destaque-valor" id="l-parcela"></p>
+        <p id="l-detalhe"></p>
+      </div>
+      <div id="l-status" class="status"></div>
+
+      <h2>No final do contrato, você escolhe:</h2>
+      <div class="escolhas">
+        <div class="escolha">
+          <p class="escolha-titulo">Ficar com o carro</p>
+          <p>Paga mais <strong id="l-residual"></strong> no final.</p>
+          <p class="escolha-total">Total gasto: <strong id="l-total-comprar"></strong></p>
+          <small id="l-juros"></small>
+        </div>
+        <div class="escolha">
+          <p class="escolha-titulo">Devolver o carro</p>
+          <p>Não paga o valor final.</p>
+          <p class="escolha-total">Total gasto: <strong id="l-total-devolver"></strong></p>
+          <small>Você usou o carro por <span id="l-anos"></span>. Dependendo do contrato, parte da entrada pode ser devolvida.</small>
+        </div>
+      </div>
+
+      <h2>Comparando com financiar</h2>
+      <p class="nota">Mesmo carro, mesma entrada, mesmos meses e mesma taxa de juros. Nos dois casos você termina dono do carro.</p>
+      <table class="comparativo">
+        <thead><tr><th></th><th>Alugar e comprar no final</th><th>Financiar</th></tr></thead>
+        <tbody id="l-comparativo"></tbody>
+      </table>
+      <p class="conclusao" id="l-conclusao"></p>
+
+      <div class="titulo-acoes">
+        <h2>E se eu mudar o número de meses?</h2>
+        <button type="button" id="l-baixar-csv" class="secundario">Baixar tabela</button>
+      </div>
+      <p class="nota">A linha verde é a sua escolha.</p>
+      <div class="tabela-wrap livre">
+        <table class="valores">
+          <thead>
+            <tr><th>Meses</th><th>Parcela por mês</th><th>Valor final</th><th>Total se ficar com o carro</th><th>Cabe no salário?</th></tr>
+          </thead>
+          <tbody id="l-valores"></tbody>
+        </table>
+      </div>
+
+      <details>
+        <summary>Ver a conta em detalhes</summary>
+        <dl id="l-resumo" class="resumo"></dl>
+      </details>
+
+      <p class="aviso">Isto é só uma simulação. Regras de devolução, seguro e valor final dependem de cada contrato.</p>
+    </section>
+  </main>
+
+  <!-- ===================== ALUGAR SEM COMPRAR (ASSINATURA) ===================== -->
+  <main class="painel" id="painel-assinatura" role="tabpanel" aria-labelledby="aba-assinatura" hidden>
+    <div class="intro-aba">
+      <strong>Como funciona:</strong> você paga uma mensalidade fixa e usa um carro novo. Seguro, IPVA, documentação
+      e revisões já estão incluídos. No final do contrato você <strong>devolve o carro</strong> e não fica com nada.
+      Também é chamado de <em>carro por assinatura</em> ou <em>locação de longo prazo</em>. Os contratos costumam
+      durar de 12 a 36 meses.
+    </div>
+    <form id="form-assinatura" novalidate>
+      <fieldset>
+        <legend><span class="passo">1</span> Sobre o carro e a assinatura</legend>
+        <label>Qual o preço do carro, se fosse comprar?
+          <input name="valorBem" type="text" inputmode="decimal" value="80.000,00" required />
+          <small class="dica">Use o preço à vista do carro novo. Serve para comparar com comprar.</small>
+        </label>
+        <label>Quanto é a mensalidade oferecida?
+          <input name="mensalidade" type="text" inputmode="decimal" value="" placeholder="Não sei: estimar para mim" />
+          <small class="dica">Use o valor da proposta da locadora. Se deixar vazio, estimamos 2,5% do preço do carro por mês.</small>
+        </label>
+        <label>Quantos meses de contrato?
+          <select name="prazoMeses">
+            <option value="12">12 meses (1 ano)</option>
+            <option value="18">18 meses (1 ano e meio)</option>
+            <option value="24" selected>24 meses (2 anos)</option>
+            <option value="36">36 meses (3 anos)</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="passo">2</span> Sobre você</legend>
+        <label>Quanto você ganha por mês?
+          <input name="rendaMensal" type="text" inputmode="decimal" value="7.000,00" required />
+          <small class="dica">Seu salário bruto (antes dos descontos).</small>
+        </label>
+        <label>Alguém vai ajudar a pagar? Quanto essa pessoa ganha?
+          <input name="rendaComplementar" type="text" inputmode="decimal" value="0,00" />
+          <small class="dica">Deixe 0 se for só você.</small>
+        </label>
+      </fieldset>
+
+      <details class="avancado">
+        <summary>Opções avançadas <small>(pode deixar como está)</small></summary>
+        <label>Parte máxima do salário para a mensalidade (%)
+          <input name="limiteComprometimento" type="text" inputmode="decimal" value="30" />
+        </label>
+        <p class="sub-legenda">Se fosse comprar financiado</p>
+        <div class="linha">
+          <label>Entrada (% do preço)
+            <input name="entradaCompraPct" type="text" inputmode="decimal" value="20" />
+          </label>
+          <label>Juros por mês (%)
+            <input name="taxaCompra" type="text" inputmode="decimal" value="1,79" />
+          </label>
+        </div>
+        <p class="sub-legenda">Quanto custa ter um carro próprio</p>
+        <div class="linha">
+          <label>Seguro por ano (% do valor)
+            <input name="seguroPctAno" type="text" inputmode="decimal" value="5" />
+          </label>
+          <label>IPVA por ano (% do valor)
+            <input name="ipvaPctAno" type="text" inputmode="decimal" value="4" />
+          </label>
+        </div>
+        <div class="linha">
+          <label>Revisões, pneus e documentos por ano (R$)
+            <input name="manutencaoAno" type="text" inputmode="decimal" value="2.000,00" />
+          </label>
+          <label>Quanto o carro perde de valor por ano (%)
+            <input name="depreciacaoPctAno" type="text" inputmode="decimal" value="10" />
+          </label>
+        </div>
+        <small class="dica bloco">O IPVA muda de estado para estado. Em vários estados fica entre 2% e 4%.</small>
+      </details>
+
+      <button type="submit">Calcular</button>
+      <p class="erros" id="a-erros" role="alert"></p>
+    </form>
+
+    <section class="resultado" id="a-resultado" hidden aria-live="polite">
+      <div class="destaque">
+        <p class="destaque-titulo">Você vai pagar</p>
+        <p class="destaque-valor" id="a-mensalidade"></p>
+        <p id="a-detalhe"></p>
+      </div>
+      <div id="a-status" class="status"></div>
+
+      <div class="cards">
+        <div class="card"><span>Total pago no contrato</span><strong id="a-total"></strong></div>
+        <div class="card"><span>No final você fica com</span><strong>Nada <small>o carro é devolvido</small></strong></div>
+        <div class="card"><span>Já está incluso</span><strong class="pequeno">Seguro, IPVA, documentos e revisões</strong></div>
+      </div>
+
+      <h2>Assinar ou comprar financiado?</h2>
+      <p class="nota" id="a-nota-comparacao"></p>
+      <table class="comparativo">
+        <thead><tr><th></th><th>Assinar</th><th>Comprar financiado</th></tr></thead>
+        <tbody id="a-comparativo"></tbody>
+      </table>
+      <p class="conclusao" id="a-conclusao"></p>
+
+      <h2>Vale a pena para quem…</h2>
+      <div class="escolhas">
+        <div class="escolha">
+          <p class="escolha-titulo">Assinar</p>
+          <ul>
+            <li>não quer se preocupar com seguro, IPVA e revisões;</li>
+            <li>não tem dinheiro para a entrada;</li>
+            <li>gosta de trocar de carro a cada 1 a 3 anos.</li>
+          </ul>
+          <small>Atenção: há limite de quilômetros por mês e multa se cancelar antes do fim.</small>
+        </div>
+        <div class="escolha">
+          <p class="escolha-titulo">Comprar</p>
+          <ul>
+            <li>quer ficar com o carro por muitos anos;</li>
+            <li>roda muitos quilômetros;</li>
+            <li>quer ter um bem que pode vender depois.</li>
+          </ul>
+        </div>
+      </div>
+
+      <details>
+        <summary>Ver a conta em detalhes</summary>
+        <dl id="a-resumo" class="resumo"></dl>
+      </details>
+
+      <p class="aviso">Isto é só uma simulação. Mensalidade, franquia de quilômetros e regras de cancelamento dependem de cada locadora.</p>
+    </section>
+  </main>
+
+  <script src="src/util.js"></script>
   <script src="src/simulador.js"></script>
+  <script src="src/alternativas.js"></script>
   <script src="src/app.js"></script>
+  <script src="src/app-alternativas.js"></script>
+  <script src="src/abas.js"></script>
 </body>
 </html>

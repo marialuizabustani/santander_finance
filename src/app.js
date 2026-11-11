@@ -2,18 +2,7 @@
   'use strict';
   const S = window.Simulador;
   const form = document.getElementById('form');
-  const $ = (id) => document.getElementById(id);
-
-  const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-  const pct = (v, d = 2) => (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }) + '%';
-
-  /** "80.000,50" -> 80000.5 ; "1,79" -> 1.79 */
-  function numero(texto) {
-    const s = String(texto || '').trim().replace(/[R$\s%]/g, '');
-    if (!s) return 0;
-    const normalizado = s.includes(',') ? s.replace(/\./g, '').replace(',', '.') : s;
-    return Number(normalizado);
-  }
+  const { $, brl, pct, numero, anos, linha } = window.Util;
 
   function lerFormulario() {
     const f = form.elements;
@@ -37,7 +26,6 @@
     };
   }
 
-  const linha = (dt, dd) => `<dt>${dt}</dt><dd>${dd}</dd>`;
   let linhasValores = [];
 
   function renderizar(r, outro) {
@@ -119,15 +107,6 @@
     desenharGrafico(price, sacR, r.renda.parcelaMaximaPermitida);
   }
 
-  function anos(meses) {
-    const a = Math.floor(meses / 12);
-    const m = meses % 12;
-    const partes = [];
-    if (a) partes.push(`${a} ${a === 1 ? 'ano' : 'anos'}`);
-    if (m) partes.push(`${m} ${m === 1 ? 'mês' : 'meses'}`);
-    return partes.join(' e ');
-  }
-
   /** Dicas práticas quando a simulação não fecha. */
   function sugestoes(r) {
     const p = r.parametros;
@@ -198,12 +177,7 @@
     linhasValores.forEach((l) =>
       linhas.push([l.prazoMeses, n(l.primeiraParcela), n(l.ultimaParcela), n(l.totalJuros), n(l.valorTotal), n(l.comprometimento * 100), l.aprovado ? 'Sim' : 'Não'])
     );
-    const csv = '﻿' + linhas.map((r) => r.join(';')).join('\n');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-    a.download = 'tabela-financiamento.csv';
-    a.click();
-    URL.revokeObjectURL(a.href);
+    window.Util.baixarCSV('tabela-financiamento.csv', linhas);
   }
   $('baixar-csv').addEventListener('click', baixarCSV);
 
