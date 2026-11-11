@@ -314,3 +314,35 @@ button.link:hover { color: var(--accent-hover); background: none; }
 @media (max-width: 620px) {
   .valores tbody th { display: flex; justify-content: space-between; align-items: center; }
 }
+
+/* ---- QR code flutuante ---- */
+.qr-botao {
+  position: fixed; right: 20px; bottom: 20px; z-index: 50;
+  width: auto; display: flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border: 0; border-radius: 999px;
+  background: var(--accent); color: #fff; font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+.qr-botao:hover { background: var(--accent-hover); }
+.qr-botao[aria-expanded=true] { background: var(--london); }
+.qr-painel {
+  position: fixed; right: 20px; bottom: 80px; z-index: 50; width: 260px;
+  background: var(--white); border-radius: 14px; padding: 18px 18px 14px; text-align: center;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+}
+.qr-painel[hidden] { display: none; }
+.qr-titulo { margin: 0; font-weight: 700; font-size: 1.05rem; }
+.qr-texto { margin: 4px 0 12px; color: var(--muted); font-size: 0.85rem; }
+.qr-imagem svg { display: block; width: 200px; height: 200px; margin: 0 auto; }
+.qr-url { display: block; margin-top: 10px; font-size: 0.8rem; color: var(--muted); word-break: break-all; }
+.qr-fechar {
+  position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 1.4rem; line-height: 1;
+}
+.qr-fechar:hover { background: var(--lisbon); color: var(--text); }
+body { padding-bottom: 80px; } /* espaço para o botão não cobrir o conteúdo */
+@media (max-width: 620px) {
+  .qr-botao { right: 14px; bottom: 14px; padding: 12px; }
+  .qr-botao-texto { display: none; }
+  .qr-painel { right: 14px; left: 14px; bottom: 74px; width: auto; }
+}

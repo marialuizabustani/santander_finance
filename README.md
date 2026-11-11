@@ -79,6 +79,15 @@ console.log(r.primeiraParcela, r.cetAnual, r.aprovado, r.pendencias);
 
 > Simulação ilustrativa. Taxas, tarifas e aprovação de crédito reais dependem da análise da instituição financeira.
 
+## QR code
+
+O botão flutuante **Abrir no celular** (canto inferior direito) mostra um QR code com o endereço
+do site, além de um botão para copiar o link. No celular, o mesmo botão serve para compartilhar o
+simulador com outra pessoa. O QR é gerado no próprio navegador com a biblioteca
+[qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT), incluída em
+`src/vendor/qrcode.js`. Se o repositório mudar de nome, atualize `URL_PUBLICA` em
+`src/qrcode-flutuante.js` (usada quando a página é aberta como arquivo local).
+
 ## Identidade visual
 
 A página segue o guia de marca Santander ("Basic guidelines"):
