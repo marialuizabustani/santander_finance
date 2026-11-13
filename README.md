@@ -99,4 +99,10 @@ A página segue o guia de marca Santander ("Basic guidelines"):
   símbolo como ícone da aba. Os arquivos em `assets/` foram extraídos do PDF do guia. Para qualidade
   máxima, substitua pelas artes-finais oficiais (`AF_SANTANDER_PV_POS_RGB.PNG` e
   `AF_SANTANDER_SY_POS_RGB.PNG`) mantendo os mesmos nomes de arquivo.
+- **Destaques:** faixa do título e rodapé em Santander Red, com o logo negativo (branco) no rodapé.
+- **Cobranding:** o topo já tem o lockup de parceria do guia (p. 9): os dois logos com a mesma
+  altura (5 módulos), 4 módulos entre eles e uma linha de 1pt no centro. Para ativar, coloque o
+  logo do parceiro em `assets/parceiro-ensino-einstein.png` (PNG com fundo transparente ou SVG),
+  descomente a tag `<img class="logo-parceiro">` em `index.html` e remova a classe `sem-parceiro`
+  da `div.lockup`.
 - **Fonte:** o guia básico não especifica tipografia; a página usa a fonte do sistema.

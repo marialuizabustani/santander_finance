@@ -10,15 +10,24 @@
 <body>
   <div class="barra-marca">
     <div class="barra-marca-conteudo">
-      <img class="logo" src="assets/santander-logo.png" alt="Santander" width="183" height="32" />
-      <span class="divisor" aria-hidden="true"></span>
+      <!-- Lockup de cobranding (guia Santander, p. 9): mesma altura (5 módulos),
+           4 módulos entre os logos e uma linha de 1pt no centro -->
+      <div class="lockup sem-parceiro" id="lockup">
+        <img class="logo" src="assets/santander-logo.png" alt="Santander" width="183" height="32" />
+        <span class="lockup-linha" aria-hidden="true"></span>
+        <!-- logo do parceiro: <img class="logo-parceiro" src="assets/parceiro-ensino-einstein.png" alt="Ensino Einstein" /> -->
+      </div>
       <span class="produto">Simulador de Veículos</span>
     </div>
   </div>
-  <header>
-    <h1>Carro: <span>financiar ou alugar?</span></h1>
-    <p>Escolha uma opção e veja quanto fica por mês.</p>
-  </header>
+
+  <div class="hero">
+    <header>
+      <p class="hero-rotulo" id="hero-rotulo">Simulador de Veículos</p>
+      <h1>Carro: financiar ou alugar?</h1>
+      <p>Escolha uma opção e veja quanto fica por mês.</p>
+    </header>
+  </div>
 
   <nav class="abas" role="tablist" aria-label="Formas de ter um carro">
     <button type="button" role="tab" id="aba-financiar" aria-controls="painel-financiar" data-hash="financiar">
@@ -534,6 +543,13 @@
       <p class="aviso">Simulação para referência. Mensalidade, quilometragem e regras de cancelamento dependem da proposta.</p>
     </section>
   </main>
+
+  <footer class="rodape">
+    <div class="rodape-conteudo">
+      <img class="logo" src="assets/santander-logo-branco.png" alt="Santander" width="183" height="32" />
+      <p>Simulador de Veículos: financiamento, leasing e carro por assinatura.</p>
+    </div>
+  </footer>
 
   <!-- QR code flutuante com o endereço do site -->
   <button type="button" class="qr-botao" id="qr-botao" aria-expanded="false" aria-controls="qr-painel" aria-label="Mostrar QR code do site">

@@ -346,3 +346,57 @@ body { padding-bottom: 80px; } /* espaço para o botão não cobrir o conteúdo 
   .qr-botao-texto { display: none; }
   .qr-painel { right: 14px; left: 14px; bottom: 74px; width: auto; }
 }
+
+/* ---- Cobranding e reforço da marca ---- */
+.barra-marca { position: relative; z-index: 2; }
+.barra-marca-conteudo { justify-content: space-between; }
+.barra-marca .divisor { display: none; }
+.lockup {
+  --logo-h: 32px;
+  --modulo: calc(var(--logo-h) / 5);  /* lockup principal: altura de 5 módulos */
+  display: flex; align-items: center;
+  gap: calc(var(--modulo) * 2);       /* 4 módulos entre os logos, linha no centro */
+}
+.lockup .logo { height: var(--logo-h); margin: 0; }
+.lockup-linha { width: 1px; height: var(--logo-h); background: #333; }  /* ~1pt */
+.logo-parceiro { display: block; height: var(--logo-h); width: auto; max-width: 180px; object-fit: contain; }
+.lockup.sem-parceiro .lockup-linha, .lockup.sem-parceiro .logo-parceiro { display: none; }
+
+/* Faixa de destaque em Santander Red (fundo permitido pelo guia) */
+.hero { background: var(--santander-red); color: var(--white); }
+.hero header { padding: 28px 16px 64px; }
+.hero h1 { color: var(--white); font-size: 2rem; letter-spacing: -0.01em; }
+.hero header p { color: rgba(255, 255, 255, 0.92); }
+.hero .hero-rotulo { display: none; }
+
+/* Abas: cartões brancos sobre a faixa vermelha */
+.abas { margin-top: -44px; position: relative; z-index: 1; }
+.abas button {
+  border: 0; border-top: 4px solid transparent; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 12px 16px;
+}
+.abas button[aria-selected=true] {
+  background: var(--white); color: var(--santander-red); border: 0; border-top: 4px solid var(--santander-red);
+}
+.abas button[aria-selected=true] strong { color: var(--santander-red); }
+.abas button[aria-selected=true] small { color: var(--muted); opacity: 1; }
+.abas button:hover:not([aria-selected=true]) { border-color: transparent; border-top-color: var(--rio); }
+
+/* Rodapé com logo negativo sobre vermelho */
+.rodape { background: var(--santander-red); color: var(--white); margin-top: 32px; }
+.rodape-conteudo {
+  max-width: 1200px; margin: 0 auto; padding: 28px 16px 96px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+}
+.rodape .logo { height: 32px; width: auto; }
+.rodape p { margin: 0; font-size: 0.85rem; opacity: 0.92; max-width: 560px; }
+body { padding-bottom: 0; }
+.qr-botao { box-shadow: 0 0 0 2px var(--white), 0 4px 14px rgba(0, 0, 0, 0.2); }
+
+@media (max-width: 620px) {
+  .lockup { --logo-h: 25px; }   /* tamanho mínimo do guia: 25px */
+  .barra-marca .produto { display: none; }
+  .hero header { padding: 20px 16px 56px; }
+  .hero h1 { font-size: 1.6rem; }
+  .rodape .logo { height: 25px; }
+}
