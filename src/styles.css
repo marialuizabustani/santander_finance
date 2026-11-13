@@ -400,3 +400,11 @@ body { padding-bottom: 0; }
   .hero h1 { font-size: 1.6rem; }
   .rodape .logo { height: 25px; }
 }
+
+/* Lockup secundário (Santander empilhado + parceiro): altura de 8 módulos */
+.lockup { --logo-h: 64px; --modulo: calc(var(--logo-h) / 8); }
+.lockup .logo, .logo-parceiro { height: var(--logo-h); width: auto; max-width: none; }
+.barra-marca-conteudo { padding-top: 12px; padding-bottom: 12px; }
+@media (max-width: 620px) {
+  .lockup { --logo-h: 50px; }   /* mínimo do guia para a versão secundária: 50px */
+}
