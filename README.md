@@ -102,10 +102,11 @@ A página segue o guia de marca Santander ("Basic guidelines"):
 - **Destaques:** faixa do título e rodapé em Santander Red, com o logo negativo (branco) no rodapé.
 - **Cobranding (Santander + Ensino Einstein):** lockups do guia (p. 9), sempre com os dois logos na
   mesma altura, 4 módulos entre eles e uma linha de 1pt no centro:
-  - **Computador:** versão principal (5 módulos, 36px): logo Santander horizontal +
+  - **Computador e tablet:** versão principal (5 módulos, 36px): logo Santander horizontal +
     `assets/parceiro-ensino-einstein-horizontal.png`.
-  - **Celular:** versão secundária (8 módulos, 50px, mínimo do guia): logo Santander empilhado
-    (`assets/santander-logo-secundario.png`, extraído do guia) + `assets/parceiro-ensino-einstein-vertical.png`.
+  - **Celular:** a mesma versão principal, no tamanho mínimo do guia (25px). Só em telas com menos de
+    372px de largura, onde ela não cabe, entra a versão secundária (8 módulos, 50px): logo Santander
+    empilhado (`assets/santander-logo-secundario.png`) + `assets/parceiro-ensino-einstein-vertical.png`.
   Os arquivos do parceiro não tiveram cores nem proporções alteradas. Para usar artes-finais em maior
   resolução, substitua os arquivos mantendo os nomes.
 - **Fonte:** o guia básico não especifica tipografia; a página usa a fonte do sistema.

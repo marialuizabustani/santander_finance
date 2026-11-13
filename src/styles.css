@@ -419,3 +419,15 @@ body { padding-bottom: 0; }
 @media (max-width: 760px) {
   .barra-marca .produto { display: none; }
 }
+
+/* Celular: também usa o lockup horizontal (versão principal) no tamanho mínimo do guia (25px).
+   Só em telas muito estreitas (< 372px), onde ele não cabe, volta para a versão empilhada. */
+@media (max-width: 620px) {
+  .barra-marca-conteudo { padding-left: 4px; padding-right: 4px; justify-content: center; }
+  .lockup-principal { display: flex; --logo-h: 25px; }
+  .lockup-secundario { display: none; }
+}
+@media (max-width: 371px) {
+  .lockup-principal { display: none; }
+  .lockup-secundario { display: flex; }
+}
