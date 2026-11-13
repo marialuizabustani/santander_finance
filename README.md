@@ -100,11 +100,12 @@ A página segue o guia de marca Santander ("Basic guidelines"):
   máxima, substitua pelas artes-finais oficiais (`AF_SANTANDER_PV_POS_RGB.PNG` e
   `AF_SANTANDER_SY_POS_RGB.PNG`) mantendo os mesmos nomes de arquivo.
 - **Destaques:** faixa do título e rodapé em Santander Red, com o logo negativo (branco) no rodapé.
-- **Cobranding (Santander + Ensino Einstein):** lockup na versão secundária do guia (p. 9), porque o
-  logo do parceiro é vertical: logo Santander empilhado (`assets/santander-logo-secundario.png`, extraído
-  do guia) e logo do Ensino Einstein (`assets/parceiro-ensino-einstein.png`) com a mesma altura
-  (8 módulos), 4 módulos entre eles e uma linha de 1pt no centro. Altura de 64px no computador e 50px
-  no celular (mínimo do guia para a versão secundária). O fundo branco do logo do parceiro foi
-  tornado transparente, sem alterar cores nem proporções. Para trocar por uma arte-final em maior
-  resolução, substitua o arquivo mantendo o nome.
+- **Cobranding (Santander + Ensino Einstein):** lockups do guia (p. 9), sempre com os dois logos na
+  mesma altura, 4 módulos entre eles e uma linha de 1pt no centro:
+  - **Computador:** versão principal (5 módulos, 36px): logo Santander horizontal +
+    `assets/parceiro-ensino-einstein-horizontal.png`.
+  - **Celular:** versão secundária (8 módulos, 50px, mínimo do guia): logo Santander empilhado
+    (`assets/santander-logo-secundario.png`, extraído do guia) + `assets/parceiro-ensino-einstein-vertical.png`.
+  Os arquivos do parceiro não tiveram cores nem proporções alteradas. Para usar artes-finais em maior
+  resolução, substitua os arquivos mantendo os nomes.
 - **Fonte:** o guia básico não especifica tipografia; a página usa a fonte do sistema.

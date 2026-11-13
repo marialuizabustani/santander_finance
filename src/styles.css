@@ -408,3 +408,14 @@ body { padding-bottom: 0; }
 @media (max-width: 620px) {
   .lockup { --logo-h: 50px; }   /* mínimo do guia para a versão secundária: 50px */
 }
+
+/* Lockup principal (computador) e secundário (celular) */
+.lockup-principal { --logo-h: 36px; --modulo: calc(var(--logo-h) / 5); }
+.lockup-secundario { --logo-h: 50px; --modulo: calc(var(--logo-h) / 8); display: none; }
+@media (max-width: 620px) {
+  .lockup-principal { display: none; }
+  .lockup-secundario { display: flex; --logo-h: 50px; }  /* mínimo do guia para a versão secundária */
+}
+@media (max-width: 760px) {
+  .barra-marca .produto { display: none; }
+}
