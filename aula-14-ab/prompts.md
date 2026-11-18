@@ -63,3 +63,15 @@ e, no empate, por sessao_id); regra 3 aplicada sobre a base após a regra 2.
 
 **Arquivos gerados:** analise/03_limpeza.py, saidas/regras_de_limpeza.csv,
 saidas/usuarios.csv.
+
+## 2026-11-18: Etapa 4, checagem de SRM
+**Prompt:** conferir se o sorteio foi respeitado antes de comparar resultados.
+Criar analise/04_srm.py, que aplica scipy.stats.chisquare à contagem por
+variante nas sessões da base bruta e nos usuários de saidas/usuarios.csv, com
+divisão esperada de 50/50; gravar saidas/srm.csv (duas linhas) e mostrar as
+contagens e os p-valores lado a lado, com as sessões internas por variante na
+base bruta como evidência. Alarme de SRM com p < 0,01; se disparar na base
+limpa, parar e não prosseguir para os testes das métricas. Não calcular taxas
+de conclusão.
+
+**Arquivos gerados:** analise/04_srm.py, saidas/srm.csv, saidas/srm_internos.csv.
