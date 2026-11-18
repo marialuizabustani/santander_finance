@@ -27,3 +27,22 @@ de 02 a 15/03/2026; métrica secundária: tempo até concluir, entre quem conclu
 Esperado: 4.234 usuários por grupo. Não ler nada em entrada/.
 
 **Arquivos gerados:** saidas/plano.md, analise/01_tamanho_amostral.py.
+
+## 2026-11-18: Etapa 2, estudo exploratório da base bruta
+**Prompt:** como analista de dados, fazer o estudo exploratório da base bruta,
+descrevendo e medindo sem remover nem corrigir nada. Criar
+analise/02_estudo_base.py, que lê entrada/experimento_agendamento.csv e grava
+saidas/estudo_base.md com: (1) estrutura (linhas, colunas, tipos, período,
+usuários distintos); (2) qualidade (nulos por coluna e em que situação
+aparecem, linhas duplicadas, sessao_id repetido); (3) frequência e % de
+variante, dispositivo e usuario_interno; (4) média, mediana, desvio, quartis,
+mín, máx e assimetria de tempo_segundos e taxa geral de conclusão;
+(5) sessões por usuário e por dia; (6) ameaças: sessões internas por variante
+e usuários nas duas variantes. Gravar o histograma de tempo_segundos e o
+gráfico de sessões por dia (uma linha por variante). Esperado: 14.392 linhas e
+8 colunas; parar se divergir. Não comparar a conclusão de A e B; não ler o
+README da pasta de dados; usar só números do script. Relatório com até 90
+linhas, terminando na lista de achados (Achado / Evidência / Ameaça).
+
+**Arquivos gerados:** analise/02_estudo_base.py, saidas/estudo_base.md,
+saidas/hist_tempo_segundos.png, saidas/sessoes_por_dia.png.
