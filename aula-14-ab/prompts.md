@@ -46,3 +46,20 @@ linhas, terminando na lista de achados (Achado / Evidência / Ameaça).
 
 **Arquivos gerados:** analise/02_estudo_base.py, saidas/estudo_base.md,
 saidas/hist_tempo_segundos.png, saidas/sessoes_por_dia.png.
+
+## 2026-11-18: Etapa 3, limpeza
+**Prompt:** aplicar as regras de limpeza do desenho, sem propor regras novas
+nem mudar a ordem. Criar analise/03_limpeza.py, que lê o CSV bruto e aplica,
+nesta ordem, mostrando as linhas antes e depois de cada regra: (1) remover
+linhas duplicadas; (2) excluir sessões com usuario_interno = "sim";
+(3) excluir todas as sessões de usuários nas duas variantes; (4) agregar uma
+linha por usuario_id com variante, dispositivo, primeira_data, concluiu (máx.)
+e tempo_segundos (máx.). Gravar saidas/regras_de_limpeza.csv e
+saidas/usuarios.csv. Esperado: 14.152, 13.516 e 13.044 sessões e 10.400
+usuários; se divergir, investigar o caminho, o filtro e a ordem, sem ajustar a
+regra. Regras iguais para A e B; entrada/ não é alterada.
+Decisão confirmada pela usuária: dispositivo = o da primeira sessão (por data
+e, no empate, por sessao_id); regra 3 aplicada sobre a base após a regra 2.
+
+**Arquivos gerados:** analise/03_limpeza.py, saidas/regras_de_limpeza.csv,
+saidas/usuarios.csv.

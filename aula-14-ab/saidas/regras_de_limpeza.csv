@@ -1,0 +1,5 @@
+regra,justificativa,linhas_antes,linhas_depois
+remover_duplicadas,a sessão ocorreu uma vez; a cópia vem do reenvio do log,14392,14152
+excluir_internos,equipe interna não é paciente,14152,13516
+excluir_usuarios_duas_variantes,a unidade sorteada é o usuário; quem viu as duas páginas está contaminado,13516,13044
+agregar_por_usuario,a métrica primária é por usuário; uma linha por usuario_id,13044,10400
