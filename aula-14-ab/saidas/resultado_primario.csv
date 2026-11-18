@@ -1,0 +1,6 @@
+base,variante,unidades,concluiram,taxa,dif_pp,ic95_inf_pp,ic95_sup_pp,qui2,p_valor
+limpa_usuarios,A,5280,2138,0.404924,,,,,
+limpa_usuarios,B,5120,2189,0.427539,,,,,
+limpa_usuarios,B-A,,,,2.26148,0.366904,4.15606,5.47184,0.0193253
+bruta_sessoes,A,6974,2248,0.32234,,,,,
+bruta_sessoes,B,7418,2781,0.374899,5.25588,,,,

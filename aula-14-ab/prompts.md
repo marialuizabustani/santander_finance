@@ -75,3 +75,28 @@ limpa, parar e não prosseguir para os testes das métricas. Não calcular taxas
 de conclusão.
 
 **Arquivos gerados:** analise/04_srm.py, saidas/srm.csv, saidas/srm_internos.csv.
+
+## 2026-11-18: Etapa 5, métrica primária (taxa de conclusão)
+**Prompt:** testar a métrica primária e relatar a evidência, sem recomendar.
+Criar analise/05_conclusao.py, que usa saidas/usuarios.csv para: (1) taxa de
+conclusão por variante e diferença B − A em p.p.; (2) tabela variante ×
+concluiu com scipy.stats.chi2_contingency(correction=False); (3) IC 95% da
+diferença pela aproximação normal; (4) para comparação, taxa por sessão na
+base bruta sem limpeza. Gravar saidas/resultado_primario.csv. Esperado: 40,5%
+em A, 42,8% em B, p ≈ 0,019. Sem Yates; comparar o IC com o efeito mínimo de
+3 p.p. de saidas/plano.md; não dizer que B é melhor sem citar o IC.
+Executado após ok da usuária, junto com a etapa 6.
+
+**Arquivos gerados:** analise/05_conclusao.py, saidas/resultado_primario.csv.
+
+## 2026-11-18: Etapa 6, métrica secundária (tempo até concluir)
+**Prompt:** testar a métrica secundária. Criar analise/06_tempo.py, que filtra
+em saidas/usuarios.csv quem concluiu e: (1) mostra n, média, mediana e desvio
+padrão de tempo_segundos por variante; (2) aplica
+scipy.stats.ttest_ind(B, A, equal_var=False); (3) grava o histograma
+sobreposto em saidas/tempo_por_variante.png e a tabela em
+saidas/resultado_tempo.csv. Esperado: média de 322,5 s em A e 292,6 s em B.
+Não usar o teste t com variâncias iguais; lembrar que é a métrica secundária.
+
+**Arquivos gerados:** analise/06_tempo.py, saidas/resultado_tempo.csv,
+saidas/tempo_por_variante.png.
