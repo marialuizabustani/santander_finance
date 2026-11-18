@@ -100,3 +100,18 @@ Não usar o teste t com variâncias iguais; lembrar que é a métrica secundári
 
 **Arquivos gerados:** analise/06_tempo.py, saidas/resultado_tempo.csv,
 saidas/tempo_por_variante.png.
+
+## 2026-11-18: Etapa 7, leitura diária do p-valor
+**Prompt:** mostrar o risco de decidir um teste A/B olhando o p-valor todos os
+dias. Criar analise/07_leitura_diaria.py com duas partes: (1) para cada dia,
+recalcular o qui-quadrado da conclusão (correction=False) com os usuários cuja
+primeira_data é até aquele dia; gravar saidas/p_valor_diario.csv e
+saidas/p_valor_diario.png com uma linha horizontal em 0,05; (2) simular 2.000
+testes A/A com numpy.random.default_rng(14) (40% nas duas páginas, 371
+usuários por grupo por dia, 14 dias, teste z de duas proporções sobre o
+acumulado) e calcular a proporção com p < 0,05 só no último dia e em pelo
+menos um dos 14 dias. Esperado: p de 0,516 no 5º dia e 0,019 no 14º; ~5% no
+último dia e ~22% em algum dia. Não alterar a duração nem o tamanho amostral.
+
+**Arquivos gerados:** analise/07_leitura_diaria.py, saidas/p_valor_diario.csv,
+saidas/p_valor_diario.png, saidas/simulacao_aa.csv.
