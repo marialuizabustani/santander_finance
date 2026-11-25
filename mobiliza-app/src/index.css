@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-tinta-fundo text-tinta antialiased; font-size: 17px; }
+  h1, h2, h3 { @apply text-tinta; letter-spacing: -0.01em; }
+  :focus-visible { outline: 3px solid #EC0000; outline-offset: 2px; }
+}
+
+@layer components {
+  .cartao { @apply bg-white rounded-2xl shadow-cartao p-5; }
+  .botao { @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition-colors duration-150 disabled:opacity-50; }
+  .botao-primario { @apply botao bg-marca text-white hover:bg-marca-escuro; }
+  .botao-secundario { @apply botao bg-white text-marca border border-marca hover:bg-marca-claro; }
+  .botao-discreto { @apply botao px-3 py-2 text-tinta-suave hover:bg-tinta-fundo font-medium; }
+  .campo { @apply block w-full rounded-xl border border-tinta-linha bg-white px-3 py-2.5 text-base focus:border-marca focus:outline-none; }
+  .rotulo { @apply block text-sm font-semibold text-tinta mb-1; }
+  .ajuda { @apply block text-sm text-tinta-suave mt-1; }
+  .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+}
+
+/* Animação discreta ao trocar de página */
+.entrar { animation: entrar 0.25s ease-out; }
+@keyframes entrar { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .entrar { animation: none; } }
+
+/* Marcadores do mapa (divIcon, sem imagens externas) */
+.pino { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); color: #fff; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,.3); border: 2px solid #fff; }
+.pino span { transform: rotate(45deg); font-size: 15px; }
+.pino-carregador { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: #fff; border: 2px solid #1f7a3a; color: #1f7a3a; font-size: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.leaflet-container { font: inherit; }
+
+/* Itens de grid não podem ficar mais largos que a coluna (evita rolagem lateral no celular) */
+@layer base {
+  .grid > * { min-width: 0; }
+}

@@ -1,0 +1,132 @@
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { PERGUNTAS_SUGERIDAS, ProvedorRegras } from '../assistant/regras';
+import type { Mensagem } from '../assistant/tipos';
+import { CabecalhoPagina, NavegacaoJornada, Selo } from '../components/ui';
+import { calcularDerivados, useEstado } from '../state/estado';
+import { irPara, type IdPagina } from '../state/rotas';
+
+/** Renderiza **negrito** e quebras de linha sem injetar HTML. */
+function TextoRico({ texto }: { texto: string }) {
+  return (
+    <>
+      {texto.split('\n').map((linha, i) => (
+        <p key={i} className={i ? 'mt-1.5' : ''}>
+          {linha.split(/(\*\*[^*]+\*\*)/).map((parte, j): ReactNode =>
+            parte.startsWith('**') ? <strong key={j}>{parte.slice(2, -2)}</strong> : <span key={j}>{parte}</span>,
+          )}
+        </p>
+      ))}
+    </>
+  );
+}
+
+let contador = 0;
+const id = () => `m${++contador}`;
+
+export function Assistente() {
+  const { dados, derivados, rotas } = useEstado();
+  const [mensagens, setMensagens] = useState<Mensagem[]>([
+    {
+      id: id(),
+      autor: 'assistente',
+      texto:
+        'Olá! Eu sou a Mobiliza IA. Explico os resultados da sua simulação usando os números calculados a partir da sua rotina. Não invento valores: se algo for hipótese ou dado fictício, eu aviso. Escolha uma pergunta abaixo ou escreva a sua.',
+    },
+  ]);
+  const [texto, setTexto] = useState('');
+  const [pensando, setPensando] = useState(false);
+  const fimRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // chaves: scrollIntoView pode devolver uma Promise em navegadores recentes, e o efeito não pode retorná-la
+    fimRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [mensagens]);
+
+  const perguntar = async (pergunta: string) => {
+    const q = pergunta.trim();
+    if (!q || pensando) return;
+    setTexto('');
+    setMensagens((m) => [...m, { id: id(), autor: 'pessoa', texto: q }]);
+    setPensando(true);
+    const resposta = await ProvedorRegras.responder(q, { dados, derivados, recalcular: (d) => calcularDerivados(d, rotas) });
+    await new Promise((r) => setTimeout(r, 350)); // pequena pausa para a leitura ficar natural
+    setMensagens((m) => [...m, { id: id(), autor: 'assistente', ...resposta }]);
+    setPensando(false);
+  };
+
+  return (
+    <div>
+      <CabecalhoPagina pagina="assistente" titulo="Mobiliza IA" descricao="Pergunte em linguagem simples. As respostas explicam os números do motor de cálculo, com base na sua rotina e no seu orçamento." />
+
+      <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+        <section className="cartao flex h-[600px] flex-col p-0" aria-label="Conversa">
+          <div className="flex-1 space-y-4 overflow-y-auto p-5" aria-live="polite">
+            {mensagens.map((m) => (
+              <div key={m.id} className={`flex ${m.autor === 'pessoa' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${m.autor === 'pessoa' ? 'rounded-br-sm bg-marca text-white' : 'rounded-bl-sm bg-tinta-fundo'}`}>
+                  <TextoRico texto={m.texto} />
+                  {m.fontes && (
+                    <p className="mt-2 border-t border-tinta-linha pt-2 text-xs text-tinta-suave">
+                      Fonte dos números: {m.fontes.join(' · ')}
+                    </p>
+                  )}
+                  {m.acoes && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {m.acoes.map((a) => (
+                        <button key={a.rotulo} type="button" className="rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-marca shadow-sm" onClick={() => irPara(a.pagina as IdPagina)}>
+                          {a.rotulo} →
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            {pensando && <p className="text-sm text-tinta-suave">Mobiliza IA está calculando…</p>}
+            <div ref={fimRef} />
+          </div>
+          <div className="border-t border-tinta-linha p-3">
+            <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+              {PERGUNTAS_SUGERIDAS.map((q) => (
+                <button key={q} type="button" className="shrink-0 rounded-full border border-tinta-linha bg-white px-3 py-1.5 text-sm hover:border-marca" onClick={() => perguntar(q)}>
+                  {q}
+                </button>
+              ))}
+            </div>
+            <form
+              className="flex gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                perguntar(texto);
+              }}
+            >
+              <label className="sr-only" htmlFor="pergunta">Sua pergunta</label>
+              <input id="pergunta" className="campo" placeholder="Ex.: e se eu rodar 2.000 km por mês?" value={texto} onChange={(e) => setTexto(e.target.value)} />
+              <button type="submit" className="botao-primario" disabled={pensando || !texto.trim()}>Enviar</button>
+            </form>
+          </div>
+        </section>
+
+        <aside className="space-y-4">
+          <div className="cartao text-sm">
+            <h2 className="mb-2 font-bold">Como a Mobiliza IA funciona</h2>
+            <p className="text-tinta-suave">Nesta demonstração, as respostas vêm de regras que leem os resultados do motor de cálculo. Nenhum dado sai do seu navegador.</p>
+            <p className="mt-2 text-tinta-suave">A arquitetura já prevê trocar as regras por um modelo de IA real, que receberia só os números calculados e a instrução de não inventar valores.</p>
+            <p className="mt-2"><Selo tipo="demonstrativo" /></p>
+          </div>
+          <div className="cartao text-sm">
+            <h2 className="mb-2 font-bold">O que ela sabe agora</h2>
+            <ul className="space-y-1 text-tinta-suave">
+              <li>• Quilometragem: {Math.round(derivados.km.kmMensal)} km/mês</li>
+              <li>• Orçamento: R$ {dados.perfil.orcamentoMensal.toLocaleString('pt-BR')}/mês</li>
+              <li>• Opções comparadas: {derivados.opcoes.length}</li>
+              <li>• Recarga em casa: {dados.rotina.recargaEmCasa ? 'sim' : 'não'}</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <NavegacaoJornada pagina="assistente" rotuloContinuar="Simular a opção escolhida" />
+    </div>
+  );
+}
