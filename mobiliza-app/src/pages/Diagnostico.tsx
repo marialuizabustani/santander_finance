@@ -5,7 +5,7 @@ import { NOME_MODALIDADE, veiculoPorId } from '../data/veiculos';
 import { useEstado } from '../state/estado';
 import { irPara } from '../state/rotas';
 
-const COR_ADEQ = { adequado: 'bg-emerald-50 text-emerald-800', atencao: 'bg-amber-50 text-amber-800', inadequado: 'bg-red-50 text-red-800' };
+const COR_ADEQ = { adequado: 'bg-ok-fundo text-ok', atencao: 'bg-marca-suave text-marca-profundo', inadequado: 'bg-marca-suave text-marca-profundo' };
 const TXT_ADEQ = { adequado: 'Combina com sua rotina', atencao: 'Combina, com atenção', inadequado: 'Não combina hoje' };
 
 export function Diagnostico() {

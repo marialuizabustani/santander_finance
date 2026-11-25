@@ -8,7 +8,7 @@ import { compararTudo, MODALIDADES, type Modalidade, type ResultadoOpcao, type T
 import { useEstado } from '../state/estado';
 import { irPara } from '../state/rotas';
 
-export const COR_TEC: Record<Tecnologia, string> = { eletrico: '#0f766e', hibrido: '#6d28d9', combustao: '#404040' };
+export const COR_TEC: Record<Tecnologia, string> = { eletrico: '#EC0000', hibrido: '#EA6F5D', combustao: '#3D3D3D' };
 const nomeCurto = (o: ResultadoOpcao) => `${veiculoPorId(o.veiculoId).nome.replace(' (fictício)', '')} · ${NOME_MODALIDADE[o.modalidade]}`;
 
 function DicaGrafico({ active, payload }: { active?: boolean; payload?: { payload: ResultadoOpcao }[] }) {
@@ -114,7 +114,7 @@ export function Comparador() {
         <p className="mt-2 text-sm text-tinta-suave">Veículos e preços fictícios. <Selo tipo="ficticio" /></p>
         <div className="mt-4 flex flex-wrap gap-2" role="tablist" aria-label="Filtrar por forma de pagamento">
           {(['todas', ...MODALIDADES] as const).map((m) => (
-            <button key={m} type="button" role="tab" aria-selected={filtro === m} onClick={() => setFiltro(m)} className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${filtro === m ? 'bg-tinta text-white' : 'bg-tinta-fundo text-tinta'}`}>
+            <button key={m} type="button" role="tab" aria-selected={filtro === m} onClick={() => setFiltro(m)} className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${filtro === m ? 'bg-marca text-white' : 'bg-tinta-fundo text-tinta'}`}>
               {m === 'todas' ? 'Todas as formas' : NOME_MODALIDADE[m]}
             </button>
           ))}
@@ -174,8 +174,8 @@ export function Comparador() {
                 <div><dt className="text-sm text-tinta-suave">Custo por km</dt><dd className="font-bold">{reais(atual.custoPorKm, 2)}</dd></div>
               </dl>
               <div className="mt-3 flex flex-wrap gap-2">
-                <span className={`chip ${atual.cabeNoOrcamento ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>{atual.cabeNoOrcamento ? '✓ cabe no orçamento mensal' : 'acima do orçamento mensal'}</span>
-                <span className={`chip ${atual.cabeNoDisponivel ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>{atual.cabeNoDisponivel ? '✓ cabe no valor disponível' : 'exige mais que o valor disponível'}</span>
+                <span className={`chip ${atual.cabeNoOrcamento ? 'bg-ok-fundo text-ok' : 'bg-marca-suave text-marca-profundo'}`}>{atual.cabeNoOrcamento ? '✓ cabe no orçamento mensal' : 'acima do orçamento mensal'}</span>
+                <span className={`chip ${atual.cabeNoDisponivel ? 'bg-ok-fundo text-ok' : 'bg-marca-suave text-marca-profundo'}`}>{atual.cabeNoDisponivel ? '✓ cabe no valor disponível' : 'exige mais que o valor disponível'}</span>
               </div>
               <h3 className="mt-4 text-sm font-semibold">Para onde vai o dinheiro</h3>
               <ul className="mt-2 space-y-1.5">
@@ -201,7 +201,7 @@ export function Comparador() {
                   <Tooltip formatter={(v: number, n: string) => [reais(v), NOME_TECNOLOGIA[n as Tecnologia]]} labelFormatter={(l) => `${l} km/mês`} />
                   <Legend formatter={(n: string) => NOME_TECNOLOGIA[n as Tecnologia]} />
                   <ReferenceLine x={Math.round(km.kmMensal / 250) * 250} stroke="#EC0000" strokeDasharray="4 4" label={{ value: 'você', fill: '#EC0000', fontSize: 11, position: 'top' }} />
-                  {sensibilidade.tecs.map((t) => <Line key={t} type="monotone" dataKey={t} stroke={COR_TEC[t]} strokeWidth={3} dot={false} isAnimationActive={false} />)}
+                  {sensibilidade.tecs.map((t) => <Line key={t} type="monotone" dataKey={t} stroke={COR_TEC[t]} strokeWidth={3} strokeDasharray={t === 'hibrido' ? '8 5' : undefined} dot={false} isAnimationActive={false} />)}
                 </LineChart>
               </ResponsiveContainer>
             </div>

@@ -29,7 +29,7 @@
 /* Marcadores do mapa (divIcon, sem imagens externas) */
 .pino { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); color: #fff; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,.3); border: 2px solid #fff; }
 .pino span { transform: rotate(45deg); font-size: 15px; }
-.pino-carregador { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: #fff; border: 2px solid #1f7a3a; color: #1f7a3a; font-size: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.pino-carregador { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: #fff; border: 2px solid #990000; color: #990000; font-size: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
 .leaflet-container { font: inherit; }
 
 /* Itens de grid não podem ficar mais largos que a coluna (evita rolagem lateral no celular) */

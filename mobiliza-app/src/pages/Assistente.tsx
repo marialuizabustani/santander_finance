@@ -137,8 +137,8 @@ export function Assistente() {
             <p className="mt-2 text-tinta-suave">
               O simulador calcula os números; a IA só explica, sem inventar valores. Se a IA não responder, as regras do simulador respondem no lugar.
             </p>
-            {iaStatus === 'ok' && <p className="mt-2 font-semibold text-emerald-700">● IA generativa conectada</p>}
-            {iaStatus === 'falhou' && <p className="mt-2 font-semibold text-amber-700">● IA indisponível agora; respondendo pelas regras</p>}
+            {iaStatus === 'ok' && <p className="mt-2 font-semibold text-ok">● IA generativa conectada</p>}
+            {iaStatus === 'falhou' && <p className="mt-2 font-semibold text-marca-profundo">● IA indisponível agora; respondendo pelas regras</p>}
             <p className="mt-2 text-xs text-tinta-suave">A pergunta e os números da simulação são enviados a um servidor intermediário e ao OpenRouter. Não envie dados pessoais.</p>
             <p className="mt-2"><Selo tipo="demonstrativo" /></p>
           </div>

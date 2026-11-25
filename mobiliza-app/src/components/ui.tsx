@@ -4,10 +4,10 @@ import { irPara, JORNADA, type IdPagina } from '../state/rotas';
 /** Selo que diferencia a natureza de cada dado: real, estimativa, hipótese ou fictício. */
 export function Selo({ tipo }: { tipo: 'real' | 'estimativa' | 'hipotese' | 'ficticio' | 'demonstrativo' }) {
   const estilos = {
-    real: 'bg-emerald-50 text-emerald-800',
-    estimativa: 'bg-amber-50 text-amber-800',
-    hipotese: 'bg-sky-50 text-sky-800',
-    ficticio: 'bg-violet-50 text-violet-800',
+    real: 'bg-ok-fundo text-ok',
+    estimativa: 'bg-marca-suave text-marca-profundo',
+    hipotese: 'bg-marca-suave text-marca-profundo',
+    ficticio: 'bg-marca-claro text-tinta-suave',
     demonstrativo: 'bg-tinta-fundo text-tinta-suave',
   };
   const texto = { real: 'Rota real', estimativa: 'Estimativa', hipotese: 'Hipótese editável', ficticio: 'Dado fictício', demonstrativo: 'Demonstrativo' };
@@ -50,7 +50,7 @@ export function Termo({ termo, children }: { termo: string; children: ReactNode 
         {termo} <span aria-hidden className="text-xs text-marca">ⓘ</span>
       </button>
       {aberto && (
-        <span role="note" className="absolute left-0 top-full z-20 mt-1 block w-64 rounded-xl bg-tinta p-3 text-sm font-normal text-white shadow-lg">
+        <span role="note" className="absolute left-0 top-full z-20 mt-1 block w-64 rounded-xl border border-tinta-linha border-t-4 border-t-marca bg-white p-3 text-sm font-normal text-tinta shadow-lg">
           {children}
         </span>
       )}
@@ -122,7 +122,7 @@ export function Interruptor({ rotulo, ligado, aoMudar, ajuda }: { rotulo: string
 }
 
 export function Aviso({ tipo = 'info', children }: { tipo?: 'info' | 'atencao' | 'ok'; children: ReactNode }) {
-  const e = { info: 'bg-marca-claro border-marca-suave', atencao: 'bg-amber-50 border-amber-200', ok: 'bg-emerald-50 border-emerald-200' }[tipo];
+  const e = { info: 'bg-marca-claro border-marca-suave', atencao: 'bg-marca-suave border-marca-mexico', ok: 'bg-ok-fundo border-ok/20' }[tipo];
   return <div className={`rounded-xl border px-4 py-3 text-sm ${e}`}>{children}</div>;
 }
 

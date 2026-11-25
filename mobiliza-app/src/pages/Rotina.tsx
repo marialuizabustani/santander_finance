@@ -81,7 +81,7 @@ export function Rotina() {
           <div className="relative">
             <Mapa locais={rotina.locais} linhas={linhas} aoClicar={posicionando ? adicionarLocal : undefined} altura="h-[340px] sm:h-[440px]" />
             {posicionando && (
-              <p className="absolute left-1/2 top-3 z-[500] -translate-x-1/2 rounded-full bg-tinta px-4 py-2 text-sm font-semibold text-white shadow-lg">
+              <p className="absolute left-1/2 top-3 z-[500] -translate-x-1/2 rounded-full bg-marca px-4 py-2 text-sm font-semibold text-white shadow-lg">
                 Toque no mapa para posicionar “{novoLocal.nome || TIPOS.find((t) => t.v === novoLocal.tipo)!.t}”
               </p>
             )}
@@ -103,15 +103,15 @@ export function Rotina() {
           </div>
           {avisoRota?.aviso && <Aviso tipo="atencao">{avisoRota.aviso}</Aviso>}
 
-          <div className="rounded-2xl bg-tinta p-5 text-white">
+          <div className="rounded-2xl bg-marca p-5 text-white">
             <p className="text-sm text-white/75">Você roda por mês, aproximadamente</p>
             <p className="text-4xl font-bold tabular-nums">{fmtKm(km.kmMensal)}</p>
             <dl className="mt-3 grid grid-cols-3 gap-2 text-sm">
-              <div><dt className="text-white/70">Rotina</dt><dd className="font-semibold">{fmtKm(km.kmRecorrenteMes)}</dd></div>
-              <div><dt className="text-white/70">Viagens</dt><dd className="font-semibold">{fmtKm(km.kmViagensMes)}</dd></div>
-              <div><dt className="text-white/70">Outros</dt><dd className="font-semibold">{fmtKm(km.kmExtrasMes)}</dd></div>
+              <div><dt className="text-white/80">Rotina</dt><dd className="font-semibold">{fmtKm(km.kmRecorrenteMes)}</dd></div>
+              <div><dt className="text-white/80">Viagens</dt><dd className="font-semibold">{fmtKm(km.kmViagensMes)}</dd></div>
+              <div><dt className="text-white/80">Outros</dt><dd className="font-semibold">{fmtKm(km.kmExtrasMes)}</dd></div>
             </dl>
-            <button type="button" className="botao-primario mt-4 w-full" disabled={km.kmMensal === 0} onClick={() => irPara('diagnostico')}>
+            <button type="button" className="botao mt-4 w-full bg-white text-marca hover:bg-marca-claro" disabled={km.kmMensal === 0} onClick={() => irPara('diagnostico')}>
               Analisar minhas opções de mobilidade →
             </button>
           </div>

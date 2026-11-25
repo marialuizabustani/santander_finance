@@ -10,7 +10,7 @@ import { useEstado } from '../state/estado';
 import { irPara } from '../state/rotas';
 
 const ROTULO = { adequado: 'Combina com a sua rotina', atencao: 'Combina, com atenção', inadequado: 'Não combina com a rotina atual' };
-const COR = { adequado: 'bg-emerald-600', atencao: 'bg-amber-500', inadequado: 'bg-red-600' };
+const COR = { adequado: 'bg-ok', atencao: 'bg-marca-profundo', inadequado: 'bg-tinta' };
 
 export function Eletrico() {
   const { dados, derivados, rotas, atualizar } = useEstado();
@@ -26,8 +26,8 @@ export function Eletrico() {
     [dados.rotina.trajetos, rotas],
   );
   const grafico = [
-    { nome: `Recarga (${dados.rotina.recargaEmCasa ? 'mais em casa' : 'mais na rua'})`, valor: an.custoRecargaMes, cor: '#0f766e' },
-    { nome: `Gasolina (${ref.nome.replace(' (fictício)', '')})`, valor: an.custoCombustivelMes, cor: '#404040' },
+    { nome: `Recarga (${dados.rotina.recargaEmCasa ? 'mais em casa' : 'mais na rua'})`, valor: an.custoRecargaMes, cor: '#EC0000' },
+    { nome: `Gasolina (${ref.nome.replace(' (fictício)', '')})`, valor: an.custoCombustivelMes, cor: '#3D3D3D' },
   ];
   const usoAutonomia = an.autonomiaPlanejadaKm ? Math.min(1, km.maiorDiaKm / an.autonomiaPlanejadaKm) : 0;
 
@@ -127,7 +127,7 @@ export function Eletrico() {
             <p className={`inline-block rounded-full px-3 py-1 text-sm font-semibold text-white ${COR[an.adequacao]}`}>{ROTULO[an.adequacao]}</p>
             <div className="mt-4">
               <p className="text-sm text-tinta-suave">Seu dia mais longo usa {Math.round(usoAutonomia * 100)}% da autonomia segura</p>
-              <div className="mt-1 h-3 rounded-full bg-tinta-fundo"><div className={`h-3 rounded-full ${usoAutonomia > 0.85 ? 'bg-amber-500' : 'bg-emerald-600'}`} style={{ width: `${usoAutonomia * 100}%` }} /></div>
+              <div className="mt-1 h-3 rounded-full bg-tinta-fundo"><div className={`h-3 rounded-full ${usoAutonomia > 0.85 ? 'bg-marca-profundo' : 'bg-ok'}`} style={{ width: `${usoAutonomia * 100}%` }} /></div>
             </div>
             <ul className="mt-4 space-y-2 text-[15px]">{an.motivos.map((m) => <li key={m}>• {m}</li>)}</ul>
             <p className="mt-3 text-sm text-tinta-suave">Recargas por semana: cerca de {num(an.recargasPorSemana)} (uma a cada {num(an.diasEntreRecargas, 0)} dia(s) de uso).</p>

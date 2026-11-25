@@ -10,7 +10,8 @@ const PACOTES = [
   { id: 'completa', nome: 'Conta Completa (demonstrativa)', texto: 'Com cartão de crédito, limite e investimentos.' },
 ];
 
-const COR_NIVEL = { Inicial: '#9ca3af', Bom: '#f59e0b', 'Muito bom': '#10b981', Excelente: '#0f766e' };
+// Escala em tons da paleta Santander (Mexico City → Madrid → Santander Red → London)
+const COR_NIVEL = { Inicial: '#F0B998', Bom: '#EA6F5D', 'Muito bom': '#EC0000', Excelente: '#990000' };
 
 export function Conta() {
   const { dados, derivados, atualizar } = useEstado();
@@ -56,7 +57,7 @@ export function Conta() {
           <div className="mt-6">
             <div className="flex items-end justify-between">
               <p className="font-semibold">Rating de relacionamento</p>
-              <p className="text-2xl font-bold" style={{ color: COR_NIVEL[rating.nivel] }}>{rating.nivel} · {rating.pontos}</p>
+              <p className="text-2xl font-bold text-tinta">{rating.nivel} · <span className="text-marca">{rating.pontos}</span></p>
             </div>
             <div className="mt-2 h-4 overflow-hidden rounded-full bg-tinta-fundo" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={rating.pontos} aria-label="Rating de relacionamento">
               <div className="h-4 rounded-full transition-all duration-500" style={{ width: `${rating.pontos}%`, background: COR_NIVEL[rating.nivel] }} />
@@ -83,7 +84,7 @@ export function Conta() {
             <div className="mt-4">
               <p className="text-sm text-tinta-suave">{v.nome}, financiamento em {prazo} meses</p>
               {[
-                { t: 'Parcela sem relacionamento', v: antes.parcelaMensal, cor: '#9ca3af' },
+                { t: 'Parcela sem relacionamento', v: antes.parcelaMensal, cor: '#9E9E9E' },
                 { t: 'Parcela com taxa bonificada', v: depois.parcelaMensal, cor: '#EC0000' },
               ].map((x) => (
                 <div key={x.t} className="mt-2">
@@ -95,7 +96,7 @@ export function Conta() {
                 {economiaParcela > 0.5 ? (
                   <>Economia de <strong className="text-marca">{reais(economiaParcela)} por mês</strong>, ou {reais(economiaParcela * prazo)} no contrato.</>
                 ) : (
-                  'Ligue as opções ao lado para ver a economia.'
+                  'Ligue as opções do simulador para ver a economia.'
                 )}
               </p>
             </div>

@@ -63,7 +63,7 @@ export function Inicio() {
             </button>
             <button type="button" onClick={() => irPara('eletrico')} className="cartao text-left">
               <span className="block text-sm text-tinta-suave">Elétrico economiza em energia</span>
-              <span className="block text-2xl font-bold text-emerald-700">{reais(ev.economiaMes)}/mês</span>
+              <span className="block text-2xl font-bold text-ok">{reais(ev.economiaMes)}/mês</span>
               <span className="text-sm text-tinta-suave">autonomia segura de {fmtKm(ev.autonomiaPlanejadaKm)}</span>
             </button>
             <button type="button" onClick={() => irPara('conta')} className="cartao text-left">
@@ -80,7 +80,7 @@ export function Inicio() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {AREAS.map((a) => (
             <button key={a.id} type="button" onClick={() => irPara(a.id)} className="cartao text-left transition-shadow hover:shadow-md">
-              <span aria-hidden className="mb-2 grid h-11 w-11 place-items-center rounded-xl bg-marca-claro text-xl">{a.icone}</span>
+              <span aria-hidden className="mb-2 grid h-11 w-11 place-items-center rounded-xl bg-marca-suave text-xl">{a.icone}</span>
               <span className="block text-lg font-bold">{a.titulo}</span>
               <span className="mt-1 block text-tinta-suave">{a.texto}</span>
             </button>

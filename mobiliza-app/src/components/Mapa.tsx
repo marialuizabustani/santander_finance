@@ -5,17 +5,17 @@ import type { Local, TipoLocal } from '../engine';
 
 export const COR_LOCAL: Record<TipoLocal, string> = {
   casa: '#EC0000',
-  trabalho: '#1d4ed8',
-  escola: '#7c3aed',
-  mercado: '#0f766e',
-  outro: '#525252',
+  trabalho: '#990000',
+  escola: '#EA6F5D',
+  mercado: '#3D3D3D',
+  outro: '#8A8A8A',
 };
 export const ICONE_LOCAL: Record<TipoLocal, string> = { casa: '⌂', trabalho: '💼', escola: '🎒', mercado: '🛒', outro: '★' };
 const CENTRO_PADRAO: [number, number] = [-23.59, -46.68];
 // listas vazias estáveis: evitam redesenhar (e reenquadrar) o mapa a cada renderização
 const SEM_LINHAS: LinhaMapa[] = [];
 const SEM_CARREGADORES: Carregador[] = [];
-export const CORES_TRAJETO = ['#EC0000', '#1d4ed8', '#0f766e', '#7c3aed', '#c2410c'];
+export const CORES_TRAJETO = ['#EC0000', '#3D3D3D', '#990000', '#EA6F5D', '#8A8A8A'];
 
 export interface LinhaMapa {
   id: string;
@@ -109,7 +109,7 @@ export function Mapa({ locais, linhas = SEM_LINHAS, carregadores = SEM_CARREGADO
 
   return (
     <div className="relative">
-      <div ref={elRef} className={`${altura} w-full overflow-hidden rounded-2xl border border-tinta-linha bg-[#e8eef2]`} role="application" aria-label="Mapa da rotina" />
+      <div ref={elRef} className={`${altura} w-full overflow-hidden rounded-2xl border border-tinta-linha bg-[#F3ECE6]`} role="application" aria-label="Mapa da rotina" />
       {semBase && (
         <p className="absolute bottom-2 left-2 right-2 z-[400] rounded-lg bg-white/95 px-3 py-1.5 text-xs text-tinta-suave shadow">
           Não foi possível carregar o fundo do mapa (sem internet ou bloqueado). Pontos e rotas continuam visíveis.

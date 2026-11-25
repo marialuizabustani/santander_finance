@@ -4,8 +4,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        marca: { DEFAULT: '#EC0000', escuro: '#CC0000', profundo: '#990000', claro: '#FBF1EA', suave: '#F5DECF' },
-        tinta: { DEFAULT: '#222222', suave: '#5F5F5F', linha: '#E6E6E6', fundo: '#F6F6F6' },
+        // Paleta primária do guia de marca Santander ("Basic guidelines", 2. Color palette).
+        // Fundos permitidos pelo guia: branco, Lisbon (claro), Rio (suave) e Santander Red.
+        marca: {
+          DEFAULT: '#EC0000', // Santander Red
+          escuro: '#CC0000', // Boston
+          profundo: '#990000', // London
+          madrid: '#EA6F5D', // Madrid
+          mexico: '#F0B998', // Mexico City
+          suave: '#F5DECF', // Rio
+          claro: '#FBF1EA', // Lisbon
+        },
+        tinta: { DEFAULT: '#222222', suave: '#5F5F5F', linha: '#E8D5C8', fundo: '#FBF1EA' },
+        // Cor funcional apenas para confirmação ("cabe no orçamento"), usada com parcimônia
+        ok: { DEFAULT: '#1D6B35', fundo: '#E9F5EC' },
       },
       fontFamily: { sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'] },
       fontSize: { base: ['17px', '1.55'] },

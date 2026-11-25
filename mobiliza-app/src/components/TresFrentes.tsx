@@ -30,9 +30,9 @@ export function TresFrentes({ compacto = false }: { compacto?: boolean }) {
   const cb = calcularOpcao(veiculoPorId(dados.veiculoReferenciaCombustaoId), 'financiamento', ctx);
   const ct = calcularOpcao(veiculoPorId(veiculoContrato), contrato, ctx);
   const colunas: { frente: Frente; o: ResultadoOpcao; titulo: string; cor: string }[] = [
-    { frente: 'eletrico', o: ev, titulo: 'Elétrico 100%', cor: '#0f766e' },
-    { frente: 'combustao', o: cb, titulo: 'Combustão', cor: '#404040' },
-    { frente: 'contrato', o: ct, titulo: contrato === 'assinatura' ? 'Assinatura' : 'Leasing', cor: '#EC0000' },
+    { frente: 'eletrico', o: ev, titulo: 'Elétrico 100%', cor: '#EC0000' },
+    { frente: 'combustao', o: cb, titulo: 'Combustão', cor: '#3D3D3D' },
+    { frente: 'contrato', o: ct, titulo: contrato === 'assinatura' ? 'Assinatura' : 'Leasing', cor: '#990000' },
   ];
   const menor = colunas.reduce((a, b) => (b.o.custoLiquido < a.o.custoLiquido ? b : a));
   const mesCb = custosMensais(cb);
@@ -45,7 +45,7 @@ export function TresFrentes({ compacto = false }: { compacto?: boolean }) {
       ))}
     </tr>
   );
-  const incluso = <span className="chip bg-emerald-50 text-emerald-800">incluso</span>;
+  const incluso = <span className="chip bg-ok-fundo text-ok">incluso</span>;
 
   return (
     <section className="cartao" aria-label="Comparativo em três frentes">
@@ -104,20 +104,20 @@ export function TresFrentes({ compacto = false }: { compacto?: boolean }) {
                 f === 'contrato' && contrato === 'assinatura' ? incluso : (
                   <span className="inline-flex items-center gap-1">
                     {o.tecnologia === 'eletrico' && p.ipvaPctAno.eletrico < p.ipvaPctAno.combustao && (
-                      <span className="chip bg-emerald-50 text-emerald-800">{p.ipvaPctAno.eletrico === 0 ? 'isento' : 'reduzido'}</span>
+                      <span className="chip bg-ok-fundo text-ok">{p.ipvaPctAno.eletrico === 0 ? 'isento' : 'reduzido'}</span>
                     )}
                     {reais(custosMensais(o).ipva)}
                   </span>
                 ),
             )}
-            {linha('Seguro (média por mês)', (o, f) => (f === 'contrato' && contrato === 'assinatura' ? <span className="chip bg-emerald-50 text-emerald-800">incluso na mensalidade</span> : reais(custosMensais(o).seguro)))}
+            {linha('Seguro (média por mês)', (o, f) => (f === 'contrato' && contrato === 'assinatura' ? <span className="chip bg-ok-fundo text-ok">incluso na mensalidade</span> : reais(custosMensais(o).seguro)))}
             {ct.composicao.excedenteKm > 0 && linha('Km acima da franquia', (o) => (o.modalidade === 'assinatura' ? reais(custosMensais(o).excedenteKm) : '—'))}
-            {linha('Total por mês', (o) => <span className={o.cabeNoOrcamento ? '' : 'text-amber-700'}>{reais(o.desembolsoMensal)}</span>, true)}
+            {linha('Total por mês', (o) => <span className={o.cabeNoOrcamento ? '' : 'text-marca-profundo'}>{reais(o.desembolsoMensal)}</span>, true)}
             {linha(`Custo total em ${H} meses`, (o) => reais(o.custoLiquido), true)}
             {linha('Economia por mês vs. combustão', (o, f) => {
               if (f === 'combustao') return '—';
               const dif = mesCb.total - custosMensais(o).total;
-              return <span className={dif >= 0 ? 'text-emerald-700' : 'text-amber-700'}>{dif >= 0 ? `− ${reais(dif)}` : `+ ${reais(-dif)}`}</span>;
+              return <span className={dif >= 0 ? 'text-ok' : 'text-marca-profundo'}>{dif >= 0 ? `− ${reais(dif)}` : `+ ${reais(-dif)}`}</span>;
             })}
           </tbody>
         </table>

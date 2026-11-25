@@ -48,24 +48,24 @@ export function RoteiroDemo() {
 
   if (minimizado) {
     return (
-      <button type="button" onClick={() => setMinimizado(false)} className="fixed bottom-3 left-3 z-40 rounded-full bg-tinta px-4 py-2.5 text-sm font-semibold text-white shadow-2xl">
+      <button type="button" onClick={() => setMinimizado(false)} className="fixed bottom-3 left-3 z-40 rounded-full bg-marca px-4 py-2.5 text-sm font-semibold text-white shadow-2xl">
         ▶ Roteiro · passo {i + 1} de {ROTEIRO.length}
       </button>
     );
   }
 
   return (
-    <aside className="fixed bottom-3 left-3 right-3 z-40 mx-auto max-w-xl rounded-2xl bg-tinta p-4 text-white shadow-2xl sm:left-4 sm:right-auto" aria-label="Roteiro da demonstração" aria-live="polite">
+    <aside className="fixed bottom-3 left-3 right-3 z-40 mx-auto max-w-xl rounded-2xl border-t-4 border-marca bg-white p-4 text-tinta shadow-2xl sm:left-4 sm:right-auto" aria-label="Roteiro da demonstração" aria-live="polite">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-white/70">Modo demonstração · passo {i + 1} de {ROTEIRO.length}</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-marca">Modo demonstração · passo {i + 1} de {ROTEIRO.length}</p>
           <p className="text-lg font-bold">{passo.titulo}</p>
         </div>
         <div className="flex shrink-0 gap-1">
-        <button type="button" className="rounded-lg px-2 py-1 text-white/80 hover:bg-white/10" onClick={() => setMinimizado(true)} aria-label="Minimizar roteiro">–</button>
+        <button type="button" className="rounded-lg px-2 py-1 text-tinta-suave hover:bg-tinta-fundo" onClick={() => setMinimizado(true)} aria-label="Minimizar roteiro">–</button>
         <button
           type="button"
-          className="rounded-lg px-2 py-1 text-white/80 hover:bg-white/10"
+          className="rounded-lg px-2 py-1 text-tinta-suave hover:bg-tinta-fundo"
           onClick={() => atualizar((d) => ({ ...d, roteiroDemo: null, relacionamento: SEM_RELACIONAMENTO }))}
           aria-label="Sair do modo demonstração"
         >
@@ -73,12 +73,12 @@ export function RoteiroDemo() {
         </button>
         </div>
       </div>
-      <p className="mt-1 text-[15px] text-white/90">{passo.fala}</p>
-      <div className="mt-3 flex items-center gap-2">
-        <div className="mr-auto flex gap-1" aria-hidden>
-          {ROTEIRO.map((_, n) => <span key={n} className={`h-1.5 w-4 rounded-full ${n <= i ? 'bg-marca' : 'bg-white/25'}`} />)}
+      <p className="mt-1 text-[15px] text-tinta-suave">{passo.fala}</p>
+      <div className="mt-3 flex items-center justify-end gap-2">
+        <div className="mr-auto hidden gap-1 sm:flex" aria-hidden>
+          {ROTEIRO.map((_, n) => <span key={n} className={`h-1.5 w-4 rounded-full ${n <= i ? 'bg-marca' : 'bg-tinta-linha'}`} />)}
         </div>
-        <button type="button" className="rounded-xl px-3 py-2 text-sm font-semibold text-white hover:bg-white/10 disabled:opacity-40" disabled={i === 0} onClick={() => ir(i - 1)}>← Anterior</button>
+        <button type="button" className="rounded-xl px-3 py-2 text-sm font-semibold text-tinta hover:bg-tinta-fundo disabled:opacity-40" disabled={i === 0} onClick={() => ir(i - 1)}>← Anterior</button>
         {i < ROTEIRO.length - 1 ? (
           <button type="button" className="rounded-xl bg-marca px-4 py-2 text-sm font-semibold text-white hover:bg-marca-escuro" onClick={() => ir(i + 1)}>Próximo →</button>
         ) : (
