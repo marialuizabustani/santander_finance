@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SEM_RELACIONAMENTO } from '../engine';
 import { useEstado, type DadosSessao } from '../state/estado';
 import { irPara, type IdPagina } from '../state/rotas';
@@ -33,6 +33,7 @@ export const ROTEIRO: Passo[] = [
 export function RoteiroDemo() {
   const { dados, atualizar } = useEstado();
   const i = dados.roteiroDemo;
+  const [minimizado, setMinimizado] = useState(false);
 
   useEffect(() => {
     if (i == null) return;
@@ -45,6 +46,14 @@ export function RoteiroDemo() {
   const passo = ROTEIRO[i];
   const ir = (n: number) => atualizar((d) => ({ ...d, roteiroDemo: Math.max(0, Math.min(ROTEIRO.length - 1, n)) }));
 
+  if (minimizado) {
+    return (
+      <button type="button" onClick={() => setMinimizado(false)} className="fixed bottom-3 left-3 z-40 rounded-full bg-tinta px-4 py-2.5 text-sm font-semibold text-white shadow-2xl">
+        ▶ Roteiro · passo {i + 1} de {ROTEIRO.length}
+      </button>
+    );
+  }
+
   return (
     <aside className="fixed bottom-3 left-3 right-3 z-40 mx-auto max-w-xl rounded-2xl bg-tinta p-4 text-white shadow-2xl sm:left-4 sm:right-auto" aria-label="Roteiro da demonstração" aria-live="polite">
       <div className="flex items-start justify-between gap-3">
@@ -52,6 +61,8 @@ export function RoteiroDemo() {
           <p className="text-xs font-bold uppercase tracking-wide text-white/70">Modo demonstração · passo {i + 1} de {ROTEIRO.length}</p>
           <p className="text-lg font-bold">{passo.titulo}</p>
         </div>
+        <div className="flex shrink-0 gap-1">
+        <button type="button" className="rounded-lg px-2 py-1 text-white/80 hover:bg-white/10" onClick={() => setMinimizado(true)} aria-label="Minimizar roteiro">–</button>
         <button
           type="button"
           className="rounded-lg px-2 py-1 text-white/80 hover:bg-white/10"
@@ -60,6 +71,7 @@ export function RoteiroDemo() {
         >
           ✕
         </button>
+        </div>
       </div>
       <p className="mt-1 text-[15px] text-white/90">{passo.fala}</p>
       <div className="mt-3 flex items-center gap-2">

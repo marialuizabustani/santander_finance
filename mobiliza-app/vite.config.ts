@@ -7,6 +7,11 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 export default defineConfig(({ mode }) => ({
   base: './',
   plugins: [react(), ...(mode === 'arquivo-unico' ? [viteSingleFile()] : [])],
-  build: { outDir: mode === 'arquivo-unico' ? 'dist-arquivo-unico' : 'dist' },
+  build: {
+    // 'publicar' gera o site em ../mobiliza, servido pelo GitHub Pages em /santander_finance/mobiliza/
+    outDir: mode === 'arquivo-unico' ? 'dist-arquivo-unico' : mode === 'publicar' ? '../mobiliza' : 'dist',
+    emptyOutDir: true,
+    chunkSizeWarningLimit: 1200,
+  },
   test: { environment: 'node' },
 }));

@@ -12,6 +12,41 @@ transparentes, a alternativas de mobilidade (elétrico, híbrido, combustão) e 
 
 ---
 
+**Link publicado:** https://marialuizabustani.github.io/santander_finance/mobiliza/
+(o simulador original continua em https://marialuizabustani.github.io/santander_finance/).
+
+## Novidades desta versão (feedbacks do Santander)
+
+| Pedido | Onde está |
+|---|---|
+| Simulador por rotina real (casa → escola → trabalho) | Minha Rotina, que alimenta todas as telas |
+| Comparação lado a lado: elétrico 100% × combustão × assinatura ou leasing | Quadro "Lado a lado" no topo do Comparador e resumido no Diagnóstico |
+| Manutenção preventiva, IPVA isento/reduzido para elétricos e seguro incluso na assinatura | Linhas do quadro lado a lado, com seletor de IPVA do elétrico (isento, reduzido ou integral) |
+| Aba de elétricos com o protagonismo do Santander (50–60% do mercado) | Mobilidade Elétrica: destaque com a fonte (feedback da banca) e catálogo de elétricos |
+| Interface do lojista para o balcão (B2B) | Área do Lojista em modo balcão: painel do vendedor, tela do cliente, pacote e "Mostrar ao cliente" em tela cheia |
+| Atalho de abertura de conta na jornada | Nova etapa "Conta e taxa", botões na Simulação e no balcão |
+| Simulador de rating e taxa bonificada (conta + portabilidade de salário) | Conta e taxa: rating ilustrativo, taxa base × bonificada e parcela antes × depois, aplicado em todo o simulador |
+| Modo de demonstração navegável | Botão "Demonstração ao vivo": carrega a persona e abre um roteiro de 10 passos pelas telas reais |
+| Chatbot com IA (LLM) | Mobiliza IA híbrida: LLM via OpenRouter, com as regras locais como reserva |
+
+## Mobiliza IA: como o LLM está ligado
+
+```
+Navegador (GitHub Pages) ──► Supabase Edge Function "mobiliza-ia" ──► OpenRouter (LLM)
+                              chave no secret OPENROUTER_API_KEY
+```
+
+* A chave do OpenRouter **não está no código nem no GitHub**: fica só no secret `OPENROUTER_API_KEY` do projeto
+  Supabase (Edge Functions → Secrets). Opcional: `OPENROUTER_MODEL` (padrão `openrouter/auto`).
+* O site envia a pergunta e **apenas os números calculados pelo simulador**. As regras locais calculam a resposta
+  de referência, e o LLM só a explica com outras palavras, com instruções para não inventar valores.
+* **Modo híbrido:** sem chave, sem internet ou com erro, as regras locais respondem e a demonstração não trava.
+  Cada resposta mostra se veio da IA generativa ou das regras.
+* A função aceita só a origem do site (e `localhost`), limita o tamanho das mensagens e o número de pedidos por
+  IP. Defina também um **limite de gasto** na chave do OpenRouter.
+* Código da função: `supabase/functions/mobiliza-ia/index.ts`. A URL e a chave *publicável* do Supabase ficam em
+  `src/assistant/llm.ts` (ambas são públicas por natureza).
+
 ## Como executar
 
 Requisitos: Node.js 18 ou superior.
@@ -27,9 +62,11 @@ Outros comandos:
 npm test                     # testes do motor de cálculo (Vitest)
 npm run build                # versão de produção em dist/
 npm run build:arquivo-unico  # um único dist-arquivo-unico/index.html, que abre com duplo clique
+npm run build:publicar       # atualiza a pasta ../mobiliza publicada pelo GitHub Pages
 ```
 
-Para a apresentação ao vivo, clique em **“Carregar cenário demonstrativo”** (canto superior direito).
+Para a apresentação ao vivo, clique em **“Demonstração ao vivo”** (canto superior direito): a persona fictícia é
+carregada e um roteiro de 10 passos conduz pelas telas, com sugestões do que falar em cada uma.
 
 > O fundo do mapa (OpenStreetMap) e o modo “Rotas reais” precisam de internet. Sem internet, pontos,
 > trajetos e todos os cálculos continuam funcionando no modo de estimativa.
@@ -38,7 +75,7 @@ Para a apresentação ao vivo, clique em **“Carregar cenário demonstrativo”
 
 ## Jornada principal
 
-**Início → Minha Rotina → Diagnóstico → Comparação → Mobiliza IA → Simulação → Próximos passos**
+**Início → Minha Rotina → Diagnóstico → Comparação → Mobiliza IA → Simulação → Conta e taxa → Próximos passos**
 
 Os dados de cada etapa alimentam as seguintes. Exemplo verificado em teste: 45 km/dia × 22 dias = **990 km/mês**,
 usados no combustível, na energia, na manutenção e na franquia da assinatura. Mudou a rotina ou uma premissa,
@@ -74,7 +111,8 @@ src/
     custos.ts        Energia, seguro/IPVA ano a ano, custo de cada modalidade, comparação
     eletrico.ts      Autonomia, compatibilidade com a rotina, recarga × combustível
     diagnostico.ts   Faixa de uso e recomendação (menor custo entre as que cabem)
-    motor.test.ts    18 testes
+    relacionamento.ts Rating ilustrativo e taxa bonificada
+    motor.test.ts    testes do motor (29 no total com os da IA)
   data/            Dados demonstrativos: premissas, veículos e carregadores fictícios, cenário de apresentação
   services/        Roteamento (estimativa/OSRM), persistência local opcional, proposta via URL
   assistant/       Mobiliza IA: interface de provedor, regras (padrão) e integração futura com modelo de IA
@@ -111,8 +149,10 @@ Para cada veículo × modalidade, no mesmo horizonte (padrão: 36 meses):
 | Gasolina | R$ 6,20/L |
 | Energia em casa / pública | R$ 0,85 / R$ 2,20 por kWh; 90% das recargas em casa (10% sem tomada) |
 | Seguro (% do valor ao ano) | elétrico 4,5% · híbrido 4% · combustão 4% |
-| IPVA (% ao ano) | elétrico 2% · híbrido 3% · combustão 4% (varia por estado) |
-| Manutenção | elétrico R$ 0,08/km · híbrido R$ 0,14/km · combustão R$ 0,18/km |
+| IPVA (% ao ano) | elétrico 2% (ou isento, conforme o estado) · híbrido 3% · combustão 4% |
+| Manutenção (desgaste) | elétrico R$ 0,05/km · híbrido R$ 0,09/km · combustão R$ 0,12/km |
+| Manutenção preventiva (revisões) | elétrico R$ 600/ano · híbrido R$ 900/ano · combustão R$ 1.200/ano |
+| Taxa bonificada (ilustrativa) | conta −0,05 p.p. · portabilidade de salário −0,15 p.p. · débito automático −0,03 p.p. · seguro −0,02 p.p. ao mês |
 | Depreciação ao ano | elétrico 15% · híbrido 12% · combustão 10% |
 | Financiamento | entrada 20%, 1,79% a.m., 48 meses, +3% de IOF/tarifas |
 | Leasing | entrada 10%, 1,59% a.m., valor final 30%, prazo = horizonte, sem IOF |

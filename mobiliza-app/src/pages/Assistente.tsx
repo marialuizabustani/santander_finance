@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { CONFIG_IA, perguntarIA } from '../assistant/llm';
 import { PERGUNTAS_SUGERIDAS, ProvedorRegras } from '../assistant/regras';
 import type { Mensagem } from '../assistant/tipos';
 import { CabecalhoPagina, NavegacaoJornada, Selo } from '../components/ui';
@@ -35,6 +36,8 @@ export function Assistente() {
   ]);
   const [texto, setTexto] = useState('');
   const [pensando, setPensando] = useState(false);
+  const [usarIA, setUsarIA] = useState(!!CONFIG_IA.endpoint);
+  const [iaStatus, setIaStatus] = useState<'nao-testada' | 'ok' | 'falhou'>('nao-testada');
   const fimRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,8 +51,22 @@ export function Assistente() {
     setTexto('');
     setMensagens((m) => [...m, { id: id(), autor: 'pessoa', texto: q }]);
     setPensando(true);
-    const resposta = await ProvedorRegras.responder(q, { dados, derivados, recalcular: (d) => calcularDerivados(d, rotas) });
-    await new Promise((r) => setTimeout(r, 350)); // pequena pausa para a leitura ficar natural
+    const ctx = { dados, derivados, recalcular: (d: typeof dados) => calcularDerivados(d, rotas) };
+    // 1) As regras sempre calculam a resposta (números do motor, fontes e ações)
+    const regras = await ProvedorRegras.responder(q, ctx);
+    let resposta: Omit<Mensagem, 'id' | 'autor'> = { ...regras, origem: 'regras' };
+    // 2) Modo híbrido: se a IA generativa estiver ligada, ela explica esses números com as próprias palavras
+    if (usarIA) {
+      try {
+        const ia = await perguntarIA(q, ctx, regras.texto, mensagens);
+        resposta = { ...regras, texto: ia.texto, origem: 'ia', modelo: ia.modelo };
+        setIaStatus('ok');
+      } catch {
+        setIaStatus('falhou');
+      }
+    } else {
+      await new Promise((r) => setTimeout(r, 350)); // pequena pausa para a leitura ficar natural
+    }
     setMensagens((m) => [...m, { id: id(), autor: 'assistente', ...resposta }]);
     setPensando(false);
   };
@@ -65,6 +82,9 @@ export function Assistente() {
               <div key={m.id} className={`flex ${m.autor === 'pessoa' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${m.autor === 'pessoa' ? 'rounded-br-sm bg-marca text-white' : 'rounded-bl-sm bg-tinta-fundo'}`}>
                   <TextoRico texto={m.texto} />
+                  {m.autor === 'assistente' && m.origem && (
+                    <p className="mt-2 text-xs text-tinta-suave">{m.origem === 'ia' ? `✨ IA generativa${m.modelo ? ` (${m.modelo})` : ''}, explicando os números do simulador` : '⚙ Resposta pelas regras do simulador'}</p>
+                  )}
                   {m.fontes && (
                     <p className="mt-2 border-t border-tinta-linha pt-2 text-xs text-tinta-suave">
                       Fonte dos números: {m.fontes.join(' · ')}
@@ -82,7 +102,7 @@ export function Assistente() {
                 </div>
               </div>
             ))}
-            {pensando && <p className="text-sm text-tinta-suave">Mobiliza IA está calculando…</p>}
+            {pensando && <p className="text-sm text-tinta-suave">{usarIA ? 'Mobiliza IA está pensando…' : 'Mobiliza IA está calculando…'}</p>}
             <div ref={fimRef} />
           </div>
           <div className="border-t border-tinta-linha p-3">
@@ -110,8 +130,16 @@ export function Assistente() {
         <aside className="space-y-4">
           <div className="cartao text-sm">
             <h2 className="mb-2 font-bold">Como a Mobiliza IA funciona</h2>
-            <p className="text-tinta-suave">Nesta demonstração, as respostas vêm de regras que leem os resultados do motor de cálculo. Nenhum dado sai do seu navegador.</p>
-            <p className="mt-2 text-tinta-suave">A arquitetura já prevê trocar as regras por um modelo de IA real, que receberia só os números calculados e a instrução de não inventar valores.</p>
+            <label className="flex items-start gap-2">
+              <input type="checkbox" className="mt-1 h-4 w-4 accent-marca" checked={usarIA} disabled={!CONFIG_IA.endpoint} onChange={(e) => setUsarIA(e.target.checked)} />
+              <span><strong>Usar IA generativa</strong> (LLM via OpenRouter)</span>
+            </label>
+            <p className="mt-2 text-tinta-suave">
+              O simulador calcula os números; a IA só explica, sem inventar valores. Se a IA não responder, as regras do simulador respondem no lugar.
+            </p>
+            {iaStatus === 'ok' && <p className="mt-2 font-semibold text-emerald-700">● IA generativa conectada</p>}
+            {iaStatus === 'falhou' && <p className="mt-2 font-semibold text-amber-700">● IA indisponível agora; respondendo pelas regras</p>}
+            <p className="mt-2 text-xs text-tinta-suave">A pergunta e os números da simulação são enviados a um servidor intermediário e ao OpenRouter. Não envie dados pessoais.</p>
             <p className="mt-2"><Selo tipo="demonstrativo" /></p>
           </div>
           <div className="cartao text-sm">

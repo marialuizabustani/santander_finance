@@ -1,5 +1,5 @@
 import { NOME_MODALIDADE, NOME_TECNOLOGIA, VEICULOS, veiculoPorId } from '../data/veiculos';
-import type { ResultadoOpcao } from '../engine';
+import { aplicarBonificacao, calcularOpcao, custosMensais, ratingRelacionamento, type Relacionamento, type ResultadoOpcao } from '../engine';
 import type { ContextoAssistente, ProvedorAssistente } from './tipos';
 
 const R = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
@@ -18,7 +18,9 @@ export type Intencao =
   | 'e-se-km'
   | 'autonomia'
   | 'termos'
-  | 'conta'
+  | 'taxa-bonificada'
+  | 'tres-frentes'
+  | 'custos-extra'
   | 'humano'
   | 'orcamento'
   | 'ajuda';
@@ -27,6 +29,9 @@ export type Intencao =
 export function identificarIntencao(pergunta: string): Intencao {
   const p = normalizar(pergunta);
   const tem = (...ps: string[]) => ps.some((x) => p.includes(x));
+  if (tem('taxa bonificada', 'rating', 'portabilidade', 'salario', 'abrir conta', 'abrir uma conta', 'conta santander', 'relacionamento', 'correntista', 'reduzir a taxa', 'taxa menor')) return 'taxa-bonificada';
+  if (tem('ipva', 'seguro', 'manutencao', 'revisao', 'revisoes')) return 'custos-extra';
+  if (tem('lado a lado', 'tres frentes', 'tres opcoes', 'comparar as tres', 'eletrico, combustao')) return 'tres-frentes';
   if (tem('e se', 'aumentar', 'rodar mais', 'rodar menos', 'diminuir', 'quilometragem')) return 'e-se-km';
   if (tem('autonomia', 'bateria', 'recarga', 'carregador', 'estrada', 'viagem')) return 'autonomia';
   if (tem('economi', 'eletrico')) return 'economia-eletrico';
@@ -34,7 +39,7 @@ export function identificarIntencao(pergunta: string): Intencao {
   if (tem('combina', 'melhor', 'recomend', 'ideal', 'escolher', 'qual alternativa')) return 'recomendacao';
   if (tem('orcamento', 'cabe', 'parcela')) return 'orcamento';
   if (tem('cet', 'juros', 'taxa', 'leasing', 'residual', 'deprecia', 'o que e', 'significa')) return 'termos';
-  if (tem('conta', 'relacionamento', 'correntista')) return 'conta';
+  if (tem('conta')) return 'taxa-bonificada';
   if (tem('pessoa', 'atendente', 'humano', 'especialista', 'falar com')) return 'humano';
   return 'ajuda';
 }
@@ -63,6 +68,9 @@ export const PERGUNTAS_SUGERIDAS = [
   'Vale mais a pena financiar ou assinar?',
   'E se minha quilometragem aumentar 30%?',
   'A autonomia do elétrico dá para minhas viagens?',
+  'Como abrir conta e trazer o salário reduz a taxa?',
+  'Compare elétrico, combustão e assinatura lado a lado',
+  'Quanto pago de IPVA, seguro e manutenção?',
   'O que é CET?',
 ];
 
@@ -193,12 +201,62 @@ export const ProvedorRegras: ProvedorAssistente = {
             'Neste protótipo, as taxas são hipóteses editáveis e não condições reais.',
           acoes: [{ rotulo: 'Ver e editar premissas', pagina: 'premissas' }],
         };
-      case 'conta':
+      case 'taxa-bonificada': {
+        const tudo: Relacionamento = { abrirConta: true, portabilidadeSalario: true, debitoAutomatico: true, seguroSantander: false };
+        const v = veiculoPorId(dados.escolha.veiculoId);
+        const base = { kmMensal: km.kmMensal, recargaEmCasa: dados.rotina.recargaEmCasa, perfil: dados.perfil };
+        const antes = calcularOpcao(v, 'financiamento', { ...base, premissas: dados.premissas });
+        const depois = calcularOpcao(v, 'financiamento', { ...base, premissas: aplicarBonificacao(dados.premissas, tudo) });
+        const t0 = dados.premissas.financiamento.taxaMes;
+        const t1 = aplicarBonificacao(dados.premissas, tudo).financiamento.taxaMes;
+        const prazo = dados.premissas.financiamento.prazoMeses;
+        const pctTxt = (x: number) => `${(x * 100).toFixed(2).replace('.', ',')}%`;
         return {
           texto:
-            'Ter conta e histórico no banco pode ajudar na análise de crédito, mas condições como taxa e aprovação dependem sempre de análise individual. Este protótipo não abre contas nem promete redução de juros.',
-          acoes: [{ rotulo: 'Ver Minha Conta (demonstrativo)', pagina: 'conta' }],
+            `Na simulação, abrir conta Santander, trazer o salário (portabilidade) e colocar as parcelas em débito automático levam o rating de relacionamento de "${ratingRelacionamento({ abrirConta: false, portabilidadeSalario: false, debitoAutomatico: false, seguroSantander: false }).nivel}" para "${ratingRelacionamento(tudo).nivel}". ` +
+            `A taxa do financiamento cai de ${pctTxt(t0)} para **${pctTxt(t1)} ao mês**. No ${v.nome.replace(' (fictício)', '')}, a parcela passa de ${R(antes.parcelaMensal)} para ${R(depois.parcelaMensal)}: ` +
+            `**${R(antes.parcelaMensal - depois.parcelaMensal)} a menos por mês**, ou ${R((antes.parcelaMensal - depois.parcelaMensal) * prazo)} em ${prazo} meses. ` +
+            'É uma simulação ilustrativa: a taxa real e a aprovação dependem sempre de análise de crédito.',
+          fontes: ['Conta e taxa: hipóteses de bonificação editáveis', 'Simulação: financiamento do veículo escolhido'],
+          acoes: [{ rotulo: 'Simular conta e taxa', pagina: 'conta' }],
         };
+      }
+      case 'tres-frentes': {
+        const base = { kmMensal: km.kmMensal, recargaEmCasa: dados.rotina.recargaEmCasa, premissas: derivados.premissasEfetivas, perfil: dados.perfil };
+        const ev = calcularOpcao(veiculoPorId(dados.veiculoEletricoId), 'financiamento', base);
+        const cb = calcularOpcao(veiculoPorId(dados.veiculoReferenciaCombustaoId), 'financiamento', base);
+        const as = calcularOpcao(veiculoPorId(dados.veiculoEletricoId), 'assinatura', base);
+        const lista = [
+          ['Elétrico financiado', ev],
+          ['Combustão financiado', cb],
+          ['Elétrico por assinatura', as],
+        ] as const;
+        const menor = [...lista].sort((a, b) => a[1].custoLiquido - b[1].custoLiquido)[0];
+        return {
+          texto:
+            `Com ${KM(km.kmMensal)} por mês, em ${H} meses:\n` +
+            lista.map(([nome, o]) => `• **${nome}**: ${R(o.desembolsoMensal)} por mês no total, custo de ${R(o.custoLiquido)} no período`).join('\n') +
+            `\nO menor custo total é o ${menor[0].toLowerCase()}. Na assinatura, seguro, IPVA e manutenção já estão na mensalidade.`,
+          fontes: ['Comparador: quadro lado a lado'],
+          acoes: [{ rotulo: 'Ver o lado a lado', pagina: 'comparador' }],
+        };
+      }
+      case 'custos-extra': {
+        const base = { kmMensal: km.kmMensal, recargaEmCasa: dados.rotina.recargaEmCasa, premissas: derivados.premissasEfetivas, perfil: dados.perfil };
+        const ev = custosMensais(calcularOpcao(veiculoPorId(dados.veiculoEletricoId), 'financiamento', base));
+        const cb = custosMensais(calcularOpcao(veiculoPorId(dados.veiculoReferenciaCombustaoId), 'financiamento', base));
+        const ipvaEv = dados.premissas.ipvaPctAno.eletrico;
+        return {
+          texto:
+            `Média por mês, além da parcela:\n` +
+            `• **Elétrico**: IPVA ${R(ev.ipva)}${ipvaEv === 0 ? ' (isento)' : ipvaEv < dados.premissas.ipvaPctAno.combustao ? ' (alíquota reduzida)' : ''}, seguro ${R(ev.seguro)}, manutenção preventiva e desgaste ${R(ev.manutencao)}.\n` +
+            `• **Combustão**: IPVA ${R(cb.ipva)}, seguro ${R(cb.seguro)}, manutenção ${R(cb.manutencao)}.\n` +
+            '• **Assinatura**: seguro, IPVA e manutenção já estão incluídos na mensalidade.\n' +
+            'O IPVA de elétricos muda por estado; ajuste "isento", "reduzido" ou "integral" no comparador.',
+          fontes: ['Comparador: custos mensais por frente', 'Premissas: IPVA, seguro e manutenção'],
+          acoes: [{ rotulo: 'Ajustar o IPVA do elétrico', pagina: 'comparador' }],
+        };
+      }
       case 'humano':
         return {
           texto:

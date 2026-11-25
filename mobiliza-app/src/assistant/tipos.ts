@@ -8,6 +8,9 @@ export interface Mensagem {
   fontes?: string[];
   /** Ações sugeridas (ex.: abrir uma tela). */
   acoes?: { rotulo: string; pagina: string }[];
+  /** quem respondeu: IA generativa (LLM) ou regras locais */
+  origem?: 'ia' | 'regras';
+  modelo?: string | null;
 }
 
 /** Contexto estruturado entregue ao assistente: SÓ dados do motor de cálculo. */
@@ -18,11 +21,7 @@ export interface ContextoAssistente {
   recalcular: (d: DadosSessao) => Derivados;
 }
 
-/**
- * Interface comum dos provedores de resposta.
- * - ProvedorRegras: demonstrativo, sem rede e sem custo (padrão).
- * - ProvedorModeloIA: ponto de integração futuro com um modelo de IA real (ver llm.ts).
- */
+/** Interface do provedor de regras locais (sem rede). A IA generativa fica em llm.ts. */
 export interface ProvedorAssistente {
   nome: string;
   responder(pergunta: string, contexto: ContextoAssistente): Promise<Omit<Mensagem, 'id' | 'autor'>>;

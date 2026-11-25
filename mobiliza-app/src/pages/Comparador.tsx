@@ -201,7 +201,7 @@ export function Comparador() {
                   <Tooltip formatter={(v: number, n: string) => [reais(v), NOME_TECNOLOGIA[n as Tecnologia]]} labelFormatter={(l) => `${l} km/mês`} />
                   <Legend formatter={(n: string) => NOME_TECNOLOGIA[n as Tecnologia]} />
                   <ReferenceLine x={Math.round(km.kmMensal / 250) * 250} stroke="#EC0000" strokeDasharray="4 4" label={{ value: 'você', fill: '#EC0000', fontSize: 11, position: 'top' }} />
-                  {sensibilidade.tecs.map((t) => <Line key={t} type="monotone" dataKey={t} stroke={COR_TEC[t]} strokeWidth={3} dot={false} />)}
+                  {sensibilidade.tecs.map((t) => <Line key={t} type="monotone" dataKey={t} stroke={COR_TEC[t]} strokeWidth={3} dot={false} isAnimationActive={false} />)}
                 </LineChart>
               </ResponsiveContainer>
             </div>

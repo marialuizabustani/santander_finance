@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:arquivo-unico": "tsc -b && vite build --mode arquivo-unico",
+    "build:publicar": "tsc -b && vite build --mode publicar",
     "preview": "vite preview",
     "test": "vitest run"
   },
