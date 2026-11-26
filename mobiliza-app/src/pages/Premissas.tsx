@@ -1,4 +1,5 @@
 import { CabecalhoPagina, CampoNumero, Cartao, Selo } from '../components/ui';
+import { RotateCcw } from 'lucide-react';
 import { DESCRICAO_PREMISSAS, PREMISSAS_PADRAO } from '../data/premissas';
 import { NOME_TECNOLOGIA } from '../data/veiculos';
 import type { Premissas as TPremissas, Tecnologia } from '../engine';
@@ -30,7 +31,7 @@ export function Premissas() {
   return (
     <div>
       <CabecalhoPagina titulo="Premissas do cálculo" descricao="Todas as hipóteses usadas nas comparações. São valores ilustrativos: mude à vontade e todos os resultados são recalculados.">
-        <button type="button" className="botao-secundario" onClick={() => set(() => PREMISSAS_PADRAO)}>↺ Restaurar padrões</button>
+        <button type="button" className="botao-secundario" onClick={() => set(() => PREMISSAS_PADRAO)}><RotateCcw className="h-4 w-4" aria-hidden /> Restaurar padrões</button>
       </CabecalhoPagina>
       <p className="mb-4"><Selo tipo="hipotese" /> Nenhum valor aqui é condição comercial do Santander ou de outra instituição.</p>
 

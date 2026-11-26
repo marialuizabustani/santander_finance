@@ -1,4 +1,6 @@
 import L from 'leaflet';
+import { Briefcase as BriefcaseV, createElement, GraduationCap as GraduationCapV, Home as HomeV, MapPin as MapPinV, ShoppingCart as ShoppingCartV, Zap as ZapV, type IconNode } from 'lucide';
+import { Briefcase, GraduationCap, Home, MapPin, ShoppingCart, type LucideIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Carregador } from '../data/carregadores';
 import type { Local, TipoLocal } from '../engine';
@@ -10,7 +12,18 @@ export const COR_LOCAL: Record<TipoLocal, string> = {
   mercado: '#3D3D3D',
   outro: '#8A8A8A',
 };
-export const ICONE_LOCAL: Record<TipoLocal, string> = { casa: '⌂', trabalho: '💼', escola: '🎒', mercado: '🛒', outro: '★' };
+/** Ícones de linha (Lucide) por tipo de lugar: componentes para a interface... */
+export const ICONE_LOCAL: Record<TipoLocal, LucideIcon> = { casa: Home, trabalho: Briefcase, escola: GraduationCap, mercado: ShoppingCart, outro: MapPin };
+/** ...e as mesmas formas em SVG puro para os marcadores do mapa (HTML do Leaflet). */
+const ICONE_MAPA: Record<TipoLocal | 'carregador', IconNode> = { casa: HomeV, trabalho: BriefcaseV, escola: GraduationCapV, mercado: ShoppingCartV, outro: MapPinV, carregador: ZapV };
+function svgIcone(tipo: keyof typeof ICONE_MAPA, tamanho: number): string {
+  const el = createElement(ICONE_MAPA[tipo]);
+  el.setAttribute('width', String(tamanho));
+  el.setAttribute('height', String(tamanho));
+  el.setAttribute('stroke-width', '2.2');
+  el.setAttribute('aria-hidden', 'true');
+  return el.outerHTML;
+}
 const CENTRO_PADRAO: [number, number] = [-23.59, -46.68];
 // listas vazias estáveis: evitam redesenhar (e reenquadrar) o mapa a cada renderização
 const SEM_LINHAS: LinhaMapa[] = [];
@@ -86,7 +99,7 @@ export function Mapa({ locais, linhas = SEM_LINHAS, carregadores = SEM_CARREGADO
     locais.forEach((loc) => {
       const icone = L.divIcon({
         className: '',
-        html: `<div class="pino" style="background:${COR_LOCAL[loc.tipo]}"><span>${ICONE_LOCAL[loc.tipo]}</span></div>`,
+        html: `<div class="pino" style="background:${COR_LOCAL[loc.tipo]}"><span>${svgIcone(loc.tipo, 16)}</span></div>`,
         iconSize: [34, 34],
         iconAnchor: [17, 34],
       });
@@ -97,7 +110,7 @@ export function Mapa({ locais, linhas = SEM_LINHAS, carregadores = SEM_CARREGADO
     });
 
     carregadores.forEach((c) => {
-      const icone = L.divIcon({ className: '', html: `<div class="pino-carregador" title="${c.nome}">⚡</div>`, iconSize: [26, 26], iconAnchor: [13, 13] });
+      const icone = L.divIcon({ className: '', html: `<div class="pino-carregador" title="${c.nome}">${svgIcone('carregador', 15)}</div>`, iconSize: [26, 26], iconAnchor: [13, 13] });
       L.marker([c.lat, c.lng], { icon: icone, title: c.nome })
         .bindPopup(`<strong>${c.nome}</strong><br>${c.tipo === 'rapido' ? 'Recarga rápida' : 'Recarga lenta'} · ${c.potenciaKw} kW<br><em>Ponto fictício</em>`)
         .addTo(camada);

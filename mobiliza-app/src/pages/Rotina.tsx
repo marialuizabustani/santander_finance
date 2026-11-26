@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { ChevronDown, ChevronUp, MapPin, Play, X } from 'lucide-react';
 import { CORES_TRAJETO, COR_LOCAL, ICONE_LOCAL, Mapa, type LinhaMapa } from '../components/Mapa';
 import { km as fmtKm, num } from '../components/formato';
 import { Aviso, CabecalhoPagina, Cartao, Interruptor, NavegacaoJornada, Selo } from '../components/ui';
@@ -70,7 +71,7 @@ export function Rotina() {
       >
         {vazio && (
           <button type="button" className="botao-secundario" onClick={carregarCenarioDemo}>
-            ▶ Carregar cenário demonstrativo
+            <Play className="h-4 w-4" fill="currentColor" aria-hidden /> Carregar cenário demonstrativo
           </button>
         )}
       </CabecalhoPagina>
@@ -123,7 +124,7 @@ export function Rotina() {
             <ul className="mb-4 space-y-2">
               {rotina.locais.map((l: Local) => (
                 <li key={l.id} className="flex items-center gap-3 rounded-xl border border-tinta-linha px-3 py-2">
-                  <span aria-hidden className="grid h-8 w-8 place-items-center rounded-full text-white" style={{ background: COR_LOCAL[l.tipo] }}>{ICONE_LOCAL[l.tipo]}</span>
+                  <span aria-hidden className="grid h-8 w-8 place-items-center rounded-full text-white" style={{ background: COR_LOCAL[l.tipo] }}>{(() => { const I = ICONE_LOCAL[l.tipo]; return <I className="h-4 w-4" />; })()}</span>
                   <input
                     className="min-w-0 flex-1 bg-transparent font-medium focus:outline-none"
                     value={l.nome}
@@ -131,7 +132,7 @@ export function Rotina() {
                     onChange={(e) => mudarRotina((r) => ({ ...r, locais: r.locais.map((x) => (x.id === l.id ? { ...x, nome: e.target.value } : x)) }))}
                   />
                   {l.ficticio && <Selo tipo="ficticio" />}
-                  <button type="button" className="botao-discreto px-2 py-1" onClick={() => removerLocal(l.id)} aria-label={`Remover ${l.nome}`}>✕</button>
+                  <button type="button" className="botao-discreto px-2 py-1" onClick={() => removerLocal(l.id)} aria-label={`Remover ${l.nome}`}><X className="h-4 w-4" aria-hidden /></button>
                 </li>
               ))}
               {vazio && <li className="text-tinta-suave">Nenhum lugar ainda. Comece pela sua casa.</li>}
@@ -143,7 +144,7 @@ export function Rotina() {
               </select>
               <div className="flex flex-wrap gap-2 sm:col-span-2">
                 <button type="button" className={posicionando ? 'botao-primario' : 'botao-secundario'} onClick={() => setPosicionando(!posicionando)}>
-                  {posicionando ? 'Cancelar' : '📍 Marcar no mapa'}
+                  {posicionando ? 'Cancelar' : <><MapPin className="h-4 w-4" aria-hidden /> Marcar no mapa</>}
                 </button>
                 <select
                   className="campo w-auto flex-1"
@@ -183,16 +184,16 @@ export function Rotina() {
                   <article key={t.id} className="rounded-xl border border-tinta-linha p-3" style={{ borderLeft: `5px solid ${CORES_TRAJETO[i % CORES_TRAJETO.length]}` }}>
                     <div className="flex items-center gap-2">
                       <input className="campo flex-1 font-semibold" value={t.nome} aria-label="Nome do trajeto" onChange={(e) => mudarTrajeto(t.id, (x) => ({ ...x, nome: e.target.value }))} />
-                      <button type="button" className="botao-discreto px-2" aria-label="Remover trajeto" onClick={() => mudarRotina((r) => ({ ...r, trajetos: r.trajetos.filter((x) => x.id !== t.id) }))}>✕</button>
+                      <button type="button" className="botao-discreto px-2" aria-label="Remover trajeto" onClick={() => mudarRotina((r) => ({ ...r, trajetos: r.trajetos.filter((x) => x.id !== t.id) }))}><X className="h-4 w-4" aria-hidden /></button>
                     </div>
                     <ol className="mt-3 space-y-1">
                       {t.paradas.map((p, j) => (
                         <li key={`${p}-${j}`} className="flex items-center gap-2 text-[15px]">
                           <span className="grid h-6 w-6 place-items-center rounded-full bg-tinta-fundo text-xs font-bold">{j + 1}</span>
                           <span className="flex-1">{nomeLocal(p)}</span>
-                          <button type="button" className="botao-discreto px-2 py-0.5" disabled={j === 0} aria-label="Subir parada" onClick={() => mudarTrajeto(t.id, (x) => { const a = [...x.paradas]; [a[j - 1], a[j]] = [a[j], a[j - 1]]; return { ...x, paradas: a }; })}>↑</button>
-                          <button type="button" className="botao-discreto px-2 py-0.5" disabled={j === t.paradas.length - 1} aria-label="Descer parada" onClick={() => mudarTrajeto(t.id, (x) => { const a = [...x.paradas]; [a[j + 1], a[j]] = [a[j], a[j + 1]]; return { ...x, paradas: a }; })}>↓</button>
-                          <button type="button" className="botao-discreto px-2 py-0.5" aria-label="Remover parada" onClick={() => mudarTrajeto(t.id, (x) => ({ ...x, paradas: x.paradas.filter((_, z) => z !== j) }))}>✕</button>
+                          <button type="button" className="botao-discreto px-2 py-0.5" disabled={j === 0} aria-label="Subir parada" onClick={() => mudarTrajeto(t.id, (x) => { const a = [...x.paradas]; [a[j - 1], a[j]] = [a[j], a[j - 1]]; return { ...x, paradas: a }; })}><ChevronUp className="h-4 w-4" aria-hidden /></button>
+                          <button type="button" className="botao-discreto px-2 py-0.5" disabled={j === t.paradas.length - 1} aria-label="Descer parada" onClick={() => mudarTrajeto(t.id, (x) => { const a = [...x.paradas]; [a[j + 1], a[j]] = [a[j], a[j + 1]]; return { ...x, paradas: a }; })}><ChevronDown className="h-4 w-4" aria-hidden /></button>
+                          <button type="button" className="botao-discreto px-2 py-0.5" aria-label="Remover parada" onClick={() => mudarTrajeto(t.id, (x) => ({ ...x, paradas: x.paradas.filter((_, z) => z !== j) }))}><X className="h-4 w-4" aria-hidden /></button>
                         </li>
                       ))}
                     </ol>
@@ -266,7 +267,7 @@ export function Rotina() {
                     <span className="sr-only">Nome da viagem</span>
                     <span className="flex gap-2">
                       <input className="campo font-semibold" value={v.nome} onChange={(e) => mudarViagem(v.id, (x) => ({ ...x, nome: e.target.value }))} />
-                      <button type="button" className="botao-discreto px-2" aria-label="Remover viagem" onClick={() => mudarRotina((r) => ({ ...r, viagens: r.viagens.filter((x) => x.id !== v.id) }))}>✕</button>
+                      <button type="button" className="botao-discreto px-2" aria-label="Remover viagem" onClick={() => mudarRotina((r) => ({ ...r, viagens: r.viagens.filter((x) => x.id !== v.id) }))}><X className="h-4 w-4" aria-hidden /></button>
                     </span>
                   </label>
                   <label><span className="text-sm text-tinta-suave">Ida e volta (km)</span><input type="number" min={0} className="campo" value={v.kmIdaEVolta} onChange={(e) => mudarViagem(v.id, (x) => ({ ...x, kmIdaEVolta: Number(e.target.value) }))} /></label>

@@ -13,13 +13,13 @@ export type IdPagina =
   | 'conta'
   | 'lojista'
   | 'proposta'
-  | 'premissas';
+  | 'premissas'
+  | 'simulador';
 
 export const JORNADA: { id: IdPagina; titulo: string }[] = [
   { id: 'rotina', titulo: 'Minha Rotina' },
   { id: 'diagnostico', titulo: 'Diagnóstico' },
   { id: 'comparador', titulo: 'Comparação' },
-  { id: 'assistente', titulo: 'Mobiliza IA' },
   { id: 'simulacao', titulo: 'Simulação' },
   { id: 'conta', titulo: 'Conta e taxa' },
   { id: 'proximos-passos', titulo: 'Próximos passos' },

@@ -1,17 +1,20 @@
 import { useState, type ReactNode } from 'react';
+import { Calculator, Home, Landmark, MapPin, Menu, MessageSquare, Play, Scale, Store, Zap, type LucideIcon } from 'lucide-react';
 import { apagarTudo, definirLembrar, lembrarAtivado } from '../services/persistencia';
+import { FaixaParceria, QrFlutuante } from './Extras';
 import { RoteiroDemo } from './RoteiroDemo';
 import { useEstado } from '../state/estado';
 import { irPara, JORNADA, type IdPagina } from '../state/rotas';
 
-const MENU: { id: IdPagina; titulo: string; icone: string }[] = [
-  { id: 'inicio', titulo: 'Início', icone: '⌂' },
-  { id: 'rotina', titulo: 'Minha Rotina', icone: '📍' },
-  { id: 'comparador', titulo: 'Comparador', icone: '⚖' },
-  { id: 'eletrico', titulo: 'Mobilidade Elétrica', icone: '⚡' },
-  { id: 'assistente', titulo: 'Mobiliza IA', icone: '💬' },
-  { id: 'conta', titulo: 'Conta e taxa', icone: '🏦' },
-  { id: 'lojista', titulo: 'Área do Lojista', icone: '🏪' },
+const MENU: { id: IdPagina; titulo: string; icone: LucideIcon }[] = [
+  { id: 'inicio', titulo: 'Início', icone: Home },
+  { id: 'rotina', titulo: 'Minha Rotina', icone: MapPin },
+  { id: 'comparador', titulo: 'Comparador', icone: Scale },
+  { id: 'simulador', titulo: 'Simulador', icone: Calculator },
+  { id: 'eletrico', titulo: 'Elétricos', icone: Zap },
+  { id: 'conta', titulo: 'Conta e taxa', icone: Landmark },
+  { id: 'lojista', titulo: 'Lojista', icone: Store },
+  { id: 'assistente', titulo: 'Mobiliza IA', icone: MessageSquare },
 ];
 
 /** Logotipo Santander (versão principal positiva, altura ≥ 25px) + nome do produto, com área de proteção. */
@@ -105,18 +108,23 @@ export function Layout({ pagina, children }: { pagina: IdPagina; children: React
                 type="button"
                 onClick={() => ir(m.id)}
                 aria-current={pagina === m.id ? 'page' : undefined}
-                className={`whitespace-nowrap rounded-lg px-2 py-2 text-[15px] font-medium ${pagina === m.id ? 'bg-marca-claro text-marca' : 'text-tinta hover:bg-tinta-fundo'}`}
+                className={
+                  m.id === 'assistente'
+                    ? `ml-1 whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-[15px] font-semibold ${pagina === m.id ? 'border-marca bg-marca text-white' : 'border-marca text-marca hover:bg-marca-claro'}`
+                    : `whitespace-nowrap rounded-lg px-2 py-2 text-[15px] font-medium ${pagina === m.id ? 'bg-marca-claro text-marca' : 'text-tinta hover:bg-tinta-fundo'}`
+                }
               >
+                {m.id === 'assistente' && <MessageSquare className="mr-1 inline h-4 w-4 align-[-2px]" aria-hidden />}
                 {m.titulo}
               </button>
             ))}
           </nav>
           <div className="flex items-center gap-2">
             <button type="button" className="botao-primario hidden whitespace-nowrap px-3 py-2 text-sm sm:inline-flex" onClick={iniciarDemonstracao} title="Carrega a persona fictícia e abre o roteiro passo a passo da apresentação">
-              ▶ <span className="xl:hidden 2xl:inline">Demonstração ao vivo</span><span className="hidden xl:inline 2xl:hidden">Demonstração</span>
+              <Play className="h-3.5 w-3.5" fill="currentColor" aria-hidden /> <span className="xl:hidden 2xl:inline">Demonstração ao vivo</span><span className="hidden xl:inline 2xl:hidden">Demonstração</span>
             </button>
             <button type="button" className="botao-discreto xl:hidden" onClick={() => setMenuAberto(!menuAberto)} aria-expanded={menuAberto} aria-controls="menu-movel">
-              ☰ <span className="sr-only">Menu</span>
+              <Menu className="h-6 w-6" aria-hidden /> <span className="sr-only">Menu</span>
             </button>
           </div>
         </div>
@@ -124,12 +132,12 @@ export function Layout({ pagina, children }: { pagina: IdPagina; children: React
           <nav id="menu-movel" className="border-t border-tinta-linha bg-white px-4 pb-4 xl:hidden" aria-label="Menu">
             {MENU.map((m) => (
               <button key={m.id} type="button" onClick={() => ir(m.id)} className="flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left text-base font-medium hover:bg-tinta-fundo">
-                <span aria-hidden className="w-6 text-center">{m.icone}</span>
+                <m.icone className="h-5 w-5 text-marca" aria-hidden />
                 {m.titulo}
               </button>
             ))}
             <button type="button" className="botao-primario mt-2 w-full" onClick={() => { iniciarDemonstracao(); setMenuAberto(false); }}>
-              ▶ Demonstração ao vivo
+              <Play className="h-4 w-4" fill="currentColor" aria-hidden /> Demonstração ao vivo
             </button>
             <button type="button" className="botao-secundario mt-2 w-full" onClick={() => { carregarCenarioDemo(); setMenuAberto(false); }}>
               Só carregar o cenário demonstrativo
@@ -147,9 +155,25 @@ export function Layout({ pagina, children }: { pagina: IdPagina; children: React
 
       <RoteiroDemo />
 
+      {pagina !== 'proposta' && <QrFlutuante />}
+
+      {pagina !== 'assistente' && pagina !== 'proposta' && (
+        <button
+          type="button"
+          onClick={() => ir('assistente')}
+          className="fixed bottom-4 right-4 z-30 flex items-center gap-2 rounded-full bg-marca px-4 py-3 font-semibold text-white shadow-2xl ring-2 ring-white hover:bg-marca-escuro"
+          aria-label="Abrir a Mobiliza IA"
+        >
+          <MessageSquare className="h-5 w-5" aria-hidden />
+          <span className="hidden sm:inline">Pergunte à Mobiliza IA</span>
+        </button>
+      )}
+
       <main id="conteudo" className="entrar mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8" key={pagina}>
         {children}
       </main>
+
+      <FaixaParceria />
 
       <footer className={`bg-marca text-sm text-white ${dados.roteiroDemo != null ? 'pb-44' : ''}`}>
         <div className="mx-auto max-w-6xl space-y-4 px-4 py-7">

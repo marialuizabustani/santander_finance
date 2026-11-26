@@ -28,6 +28,10 @@ transparentes, a alternativas de mobilidade (elétrico, híbrido, combustão) e 
 | Simulador de rating e taxa bonificada (conta + portabilidade de salário) | Conta e taxa: rating ilustrativo, taxa base × bonificada e parcela antes × depois, aplicado em todo o simulador |
 | Modo de demonstração navegável | Botão "Demonstração ao vivo": carrega a persona e abre um roteiro de 10 passos pelas telas reais |
 | Chatbot com IA (LLM) | Mobiliza IA híbrida: LLM via OpenRouter, com as regras locais como reserva |
+| Funcionalidades do simulador original | Aba **Simulador**: Financiar (Price ou SAC, IOF, CET, tabela por prazos com CSV, parcela por parcela, gráfico e glossário), Alugar e comprar no final (leasing) e Alugar sem comprar (assinatura). Usa o **mesmo motor de cálculo** do site original (`src/legado/`, com teste que compara os dois), além do QR code "Abrir no celular" e da parceria com o Ensino Einstein |
+| Modalidades separadas | Comparador em abas: Visão geral, Financiamento, Leasing, Assinatura e Compra à vista, cada uma com explicação, condições editáveis e ranking dos veículos |
+| Chatbot em aba própria | Mobiliza IA fora da jornada, com aba no menu, botão flutuante em todas as telas e conversa mantida durante a sessão |
+| Visual profissional | Ícones de linha (Lucide) no lugar de emojis |
 
 ## Mobiliza IA: como o LLM está ligado
 
@@ -75,7 +79,9 @@ carregada e um roteiro de 10 passos conduz pelas telas, com sugestões do que fa
 
 ## Jornada principal
 
-**Início → Minha Rotina → Diagnóstico → Comparação → Mobiliza IA → Simulação → Conta e taxa → Próximos passos**
+**Início → Minha Rotina → Diagnóstico → Comparação → Simulação → Conta e taxa → Próximos passos**
+
+A Mobiliza IA e o Simulador completo ficam em abas próprias, acessíveis a qualquer momento.
 
 Os dados de cada etapa alimentam as seguintes. Exemplo verificado em teste: 45 km/dia × 22 dias = **990 km/mês**,
 usados no combustível, na energia, na manutenção e na franquia da assinatura. Mudou a rotina ou uma premissa,

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Minus, Play, X } from 'lucide-react';
 import { SEM_RELACIONAMENTO } from '../engine';
 import { useEstado, type DadosSessao } from '../state/estado';
 import { irPara, type IdPagina } from '../state/rotas';
@@ -49,7 +50,7 @@ export function RoteiroDemo() {
   if (minimizado) {
     return (
       <button type="button" onClick={() => setMinimizado(false)} className="fixed bottom-3 left-3 z-40 rounded-full bg-marca px-4 py-2.5 text-sm font-semibold text-white shadow-2xl">
-        ▶ Roteiro · passo {i + 1} de {ROTEIRO.length}
+        <Play className="mr-1 inline h-3.5 w-3.5 align-[-2px]" fill="currentColor" aria-hidden /> Roteiro · passo {i + 1} de {ROTEIRO.length}
       </button>
     );
   }
@@ -62,14 +63,14 @@ export function RoteiroDemo() {
           <p className="text-lg font-bold">{passo.titulo}</p>
         </div>
         <div className="flex shrink-0 gap-1">
-        <button type="button" className="rounded-lg px-2 py-1 text-tinta-suave hover:bg-tinta-fundo" onClick={() => setMinimizado(true)} aria-label="Minimizar roteiro">–</button>
+        <button type="button" className="rounded-lg px-2 py-1 text-tinta-suave hover:bg-tinta-fundo" onClick={() => setMinimizado(true)} aria-label="Minimizar roteiro"><Minus className="h-4 w-4" aria-hidden /></button>
         <button
           type="button"
           className="rounded-lg px-2 py-1 text-tinta-suave hover:bg-tinta-fundo"
           onClick={() => atualizar((d) => ({ ...d, roteiroDemo: null, relacionamento: SEM_RELACIONAMENTO }))}
           aria-label="Sair do modo demonstração"
         >
-          ✕
+          <X className="h-4 w-4" aria-hidden />
         </button>
         </div>
       </div>

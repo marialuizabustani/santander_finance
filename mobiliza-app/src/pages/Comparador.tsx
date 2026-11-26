@@ -1,12 +1,21 @@
 import { useMemo, useState } from 'react';
+import { Scale } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { km as fmtKm, pct, reais } from '../components/formato';
+import { ModalidadeAba, SOBRE_MODALIDADE } from '../components/ModalidadeAba';
 import { TresFrentes } from '../components/TresFrentes';
 import { Aviso, CabecalhoPagina, CampoNumero, Cartao, NavegacaoJornada, Selo, Termo } from '../components/ui';
 import { NOME_MODALIDADE, NOME_TECNOLOGIA, VEICULOS, veiculoPorId } from '../data/veiculos';
 import { compararTudo, MODALIDADES, type Modalidade, type ResultadoOpcao, type Tecnologia } from '../engine';
 import { useEstado } from '../state/estado';
-import { irPara } from '../state/rotas';
+import { irPara, lerRota } from '../state/rotas';
+
+type Aba = Modalidade | 'todas';
+const ABAS: Aba[] = ['todas', 'financiamento', 'leasing', 'assinatura', 'avista'];
+const abaInicial = (): Aba => {
+  const a = lerRota().params.get('aba') as Aba | null;
+  return a && ABAS.includes(a) ? a : 'todas';
+};
 
 export const COR_TEC: Record<Tecnologia, string> = { eletrico: '#EC0000', hibrido: '#EA6F5D', combustao: '#3D3D3D' };
 const nomeCurto = (o: ResultadoOpcao) => `${veiculoPorId(o.veiculoId).nome.replace(' (fictício)', '')} · ${NOME_MODALIDADE[o.modalidade]}`;
@@ -28,13 +37,20 @@ export function Comparador() {
   const { dados, derivados, atualizar } = useEstado();
   const { opcoes, km, recomendacao } = derivados;
   const p = dados.premissas;
-  const [filtro, setFiltro] = useState<Modalidade | 'todas'>('todas');
+  const [filtro, setFiltroEstado] = useState<Aba>(abaInicial);
+  // Troca de aba guarda o endereço (#/comparador?aba=leasing) sem rolar a página
+  const setFiltro = (a: Aba) => {
+    setFiltroEstado(a);
+    setSelecionada(null);
+    history.replaceState(null, '', `#/comparador${a === 'todas' ? '' : `?aba=${a}`}`);
+  };
   const [selecionada, setSelecionada] = useState<string | null>(null);
 
   const visiveis = useMemo(() => [...opcoes].filter((o) => filtro === 'todas' || o.modalidade === filtro).sort((a, b) => a.custoMensalMedio - b.custoMensalMedio), [opcoes, filtro]);
   const chave = (o: ResultadoOpcao) => `${o.veiculoId}|${o.modalidade}`;
   const recomendada = recomendacao.melhor ? chave(recomendacao.melhor) : null;
-  const atual = visiveis.find((o) => chave(o) === selecionada) ?? recomendacao.melhor ?? visiveis[0];
+  const melhorDaAba = visiveis.find((o) => o.cabeNoOrcamento && o.cabeNoDisponivel) ?? visiveis[0];
+  const atual = visiveis.find((o) => chave(o) === selecionada) ?? (filtro === 'todas' ? recomendacao.melhor : melhorDaAba) ?? visiveis[0];
 
   const mudarPremissa = (f: (x: typeof p) => typeof p) => atualizar((d) => ({ ...d, premissas: f(d.premissas) }));
 
@@ -84,10 +100,37 @@ export function Comparador() {
         descricao={`Todas as opções comparadas no mesmo período de ${p.horizonteMeses} meses, com a sua quilometragem de ${fmtKm(km.kmMensal)} por mês.`}
       />
 
-      <TresFrentes />
+      <div className="mb-6">
+        <div className="flex gap-1 overflow-x-auto border-b-2 border-tinta-linha" role="tablist" aria-label="Formas de pagamento">
+          {ABAS.map((a) => (
+            <button
+              key={a}
+              type="button"
+              role="tab"
+              id={`aba-${a}`}
+              aria-selected={filtro === a}
+              aria-controls="painel-modalidade"
+              onClick={() => setFiltro(a)}
+              className={`-mb-0.5 flex shrink-0 items-center gap-2 whitespace-nowrap border-b-4 px-4 py-3 text-[15px] font-semibold transition-colors ${
+                filtro === a ? 'border-marca text-marca' : 'border-transparent text-tinta-suave hover:text-tinta'
+              }`}
+            >
+              {(() => { const I = a === 'todas' ? Scale : SOBRE_MODALIDADE[a].icone; return <I className="h-4 w-4" aria-hidden />; })()}
+              {a === 'todas' ? 'Visão geral' : NOME_MODALIDADE[a]}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      <h2 className="mb-3 mt-8 text-xl font-bold">Todas as combinações</h2>
-      <Cartao titulo="O que comparar">
+      <div id="painel-modalidade" role="tabpanel" aria-labelledby={`aba-${filtro}`}>
+      {filtro === 'todas' ? (
+        <TresFrentes />
+      ) : (
+        <ModalidadeAba m={filtro} opcoes={visiveis} aoEscolher={(o) => { setSelecionada(chave(o)); document.getElementById('detalhes-opcao')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} />
+      )}
+
+      <h2 className="mb-3 mt-8 text-xl font-bold">{filtro === 'todas' ? 'Todas as combinações' : `Gráficos e detalhes: ${NOME_MODALIDADE[filtro].toLowerCase()}`}</h2>
+      <Cartao titulo="Veículos comparados">
         <div className="flex flex-wrap gap-2">
           {VEICULOS.map((v) => {
             const ativo = dados.veiculosComparados.includes(v.id);
@@ -112,13 +155,6 @@ export function Comparador() {
           })}
         </div>
         <p className="mt-2 text-sm text-tinta-suave">Veículos e preços fictícios. <Selo tipo="ficticio" /></p>
-        <div className="mt-4 flex flex-wrap gap-2" role="tablist" aria-label="Filtrar por forma de pagamento">
-          {(['todas', ...MODALIDADES] as const).map((m) => (
-            <button key={m} type="button" role="tab" aria-selected={filtro === m} onClick={() => setFiltro(m)} className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${filtro === m ? 'bg-marca text-white' : 'bg-tinta-fundo text-tinta'}`}>
-              {m === 'todas' ? 'Todas as formas' : NOME_MODALIDADE[m]}
-            </button>
-          ))}
-        </div>
       </Cartao>
 
       {opcoes.length === 0 ? (
@@ -151,9 +187,10 @@ export function Comparador() {
           </Cartao>
 
           {atual && (
+            <div id="detalhes-opcao" className="scroll-mt-40">
             <Cartao
               titulo={nomeCurto(atual)}
-              subtitulo={chave(atual) === recomendada ? '★ Recomendada para a sua rotina' : 'Opção selecionada'}
+              subtitulo={chave(atual) === recomendada ? 'Recomendada para a sua rotina' : 'Opção selecionada'}
               acao={
                 <button
                   type="button"
@@ -189,6 +226,7 @@ export function Comparador() {
               {atual.patrimonioFinal > 0 && <p className="mt-2 text-sm text-tinta-suave">O carro ainda vale cerca de {reais(atual.patrimonioFinal)} no fim (já descontado do custo). <Selo tipo="estimativa" /></p>}
               {atual.observacoes.map((o) => <p key={o} className="mt-2 text-sm text-tinta-suave">• {o}</p>)}
             </Cartao>
+            </div>
           )}
 
           <Cartao titulo="E se eu rodar mais ou menos?" subtitulo="Custo médio por mês da opção mais barata de cada tecnologia, conforme a quilometragem.">
@@ -241,7 +279,7 @@ export function Comparador() {
             <tbody>
               {visiveis.map((o) => (
                 <tr key={chave(o)} className={`border-b ${chave(o) === recomendada ? 'bg-marca-claro font-semibold' : ''}`}>
-                  <td className="py-2">{chave(o) === recomendada ? '★ ' : ''}{nomeCurto(o)}</td>
+                  <td className="py-2">{nomeCurto(o)}{chave(o) === recomendada && <span className="chip ml-2 bg-marca text-white">Recomendada</span>}</td>
                   <td className="text-right tabular-nums">{reais(o.desembolsoInicial)}</td>
                   <td className="text-right tabular-nums">{reais(o.desembolsoMensal)}</td>
                   <td className="text-right tabular-nums">{reais(o.custoMensalMedio)}</td>
@@ -255,7 +293,9 @@ export function Comparador() {
         </div>
       </details>
 
-      <NavegacaoJornada pagina="comparador" rotuloContinuar="Tirar dúvidas com a Mobiliza IA" />
+      </div>
+
+      <NavegacaoJornada pagina="comparador" rotuloContinuar="Simular a opção escolhida" />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { AlertTriangle, BatteryCharging, Check, PlugZap, Route } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { km as fmtKm, num, reais } from '../components/formato';
 import { CORES_TRAJETO, Mapa, type LinhaMapa } from '../components/Mapa';
@@ -137,7 +138,7 @@ export function Eletrico() {
         <div className="space-y-6">
           <Cartao titulo="Mapa de carregadores" subtitulo="Pontos de recarga FICTÍCIOS, só para demonstração, junto com a sua rotina.">
             <Mapa locais={dados.rotina.locais} linhas={linhas} carregadores={CARREGADORES_FICTICIOS} altura="h-[360px]" />
-            <p className="mt-2 text-sm text-tinta-suave">⚡ Toque num carregador para ver potência e tipo. Em uma versão real, os pontos viriam de bases públicas ou de parceiros.</p>
+            <p className="mt-2 text-sm text-tinta-suave">Toque num carregador para ver potência e tipo. Em uma versão real, os pontos viriam de bases públicas ou de parceiros.</p>
           </Cartao>
 
           <Cartao titulo="Quanto você gasta para rodar" subtitulo={`Com ${fmtKm(km.kmMensal)} por mês`}>
@@ -167,9 +168,9 @@ export function Eletrico() {
 
       <Cartao titulo="O que considerar antes de escolher um elétrico" className="mt-6">
         <div className="grid gap-4 sm:grid-cols-3">
-          <div><p className="font-semibold">🛣 Viagens longas</p><p className="text-[15px] text-tinta-suave">Na estrada a autonomia cai. Planeje paradas em carregadores rápidos; uma parada de 20 a 40 minutos costuma recuperar boa parte da bateria.</p></div>
-          <div><p className="font-semibold">🏠 Recarga em casa</p><p className="text-[15px] text-tinta-suave">É o que mais reduz o custo. Sem tomada em casa, a pessoa depende de pontos públicos, que são mais caros e podem ter fila.</p></div>
-          <div><p className="font-semibold">🔋 Bateria</p><p className="text-[15px] text-tinta-suave">A capacidade diminui aos poucos com os anos. Pergunte sobre a garantia da bateria e o valor de revenda.</p></div>
+          <div><p className="flex items-center gap-2 font-semibold"><Route className="h-5 w-5 text-marca" aria-hidden />Viagens longas</p><p className="text-[15px] text-tinta-suave">Na estrada a autonomia cai. Planeje paradas em carregadores rápidos; uma parada de 20 a 40 minutos costuma recuperar boa parte da bateria.</p></div>
+          <div><p className="flex items-center gap-2 font-semibold"><PlugZap className="h-5 w-5 text-marca" aria-hidden />Recarga em casa</p><p className="text-[15px] text-tinta-suave">É o que mais reduz o custo. Sem tomada em casa, a pessoa depende de pontos públicos, que são mais caros e podem ter fila.</p></div>
+          <div><p className="flex items-center gap-2 font-semibold"><BatteryCharging className="h-5 w-5 text-marca" aria-hidden />Bateria</p><p className="text-[15px] text-tinta-suave">A capacidade diminui aos poucos com os anos. Pergunte sobre a garantia da bateria e o valor de revenda.</p></div>
         </div>
         {an.viagens.length > 0 && (
           <div className="mt-4 overflow-x-auto">
@@ -180,7 +181,7 @@ export function Eletrico() {
                   <tr key={v.viagem.id} className="border-b">
                     <td className="py-2">{v.viagem.nome}</td>
                     <td>{fmtKm(v.viagem.kmIdaEVolta / 2)}</td>
-                    <td>{fmtKm(v.viagem.maiorTrechoKm)} {v.trechoCabe ? '✓' : '⚠'}</td>
+                    <td>{fmtKm(v.viagem.maiorTrechoKm)} {v.trechoCabe ? <Check className="inline h-4 w-4 text-ok" aria-label="cabe na autonomia" /> : <AlertTriangle className="inline h-4 w-4 text-marca-profundo" aria-label="maior que a autonomia segura" />}</td>
                     <td>{v.paradasNaIda === 0 ? 'nenhuma' : v.paradasNaIda}</td>
                   </tr>
                 ))}

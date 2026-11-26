@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Calculator, RotateCcw, Sparkles } from 'lucide-react';
 import { CONFIG_IA, perguntarIA } from '../assistant/llm';
 import { PERGUNTAS_SUGERIDAS, ProvedorRegras } from '../assistant/regras';
 import type { Mensagem } from '../assistant/tipos';
-import { CabecalhoPagina, NavegacaoJornada, Selo } from '../components/ui';
+import { CabecalhoPagina, Selo } from '../components/ui';
 import { calcularDerivados, useEstado } from '../state/estado';
 import { irPara, type IdPagina } from '../state/rotas';
 
@@ -24,9 +25,12 @@ function TextoRico({ texto }: { texto: string }) {
 let contador = 0;
 const id = () => `m${++contador}`;
 
+/** Conversa guardada fora do componente: continua lá ao sair e voltar para a aba (só nesta sessão). */
+let conversaGuardada: Mensagem[] | null = null;
+
 export function Assistente() {
   const { dados, derivados, rotas } = useEstado();
-  const [mensagens, setMensagens] = useState<Mensagem[]>([
+  const [mensagens, setMensagensEstado] = useState<Mensagem[]>(() => conversaGuardada ?? [
     {
       id: id(),
       autor: 'assistente',
@@ -34,6 +38,11 @@ export function Assistente() {
         'Olá! Eu sou a Mobiliza IA. Explico os resultados da sua simulação usando os números calculados a partir da sua rotina. Não invento valores: se algo for hipótese ou dado fictício, eu aviso. Escolha uma pergunta abaixo ou escreva a sua.',
     },
   ]);
+  const setMensagens = (f: (m: Mensagem[]) => Mensagem[]) =>
+    setMensagensEstado((m) => {
+      conversaGuardada = f(m);
+      return conversaGuardada;
+    });
   const [texto, setTexto] = useState('');
   const [pensando, setPensando] = useState(false);
   const [usarIA, setUsarIA] = useState(!!CONFIG_IA.endpoint);
@@ -73,7 +82,9 @@ export function Assistente() {
 
   return (
     <div>
-      <CabecalhoPagina pagina="assistente" titulo="Mobiliza IA" descricao="Pergunte em linguagem simples. As respostas explicam os números do motor de cálculo, com base na sua rotina e no seu orçamento." />
+      <CabecalhoPagina titulo="Mobiliza IA" descricao="Pergunte em linguagem simples, a qualquer momento. As respostas explicam os números do simulador, com base na sua rotina e no seu orçamento.">
+        <button type="button" className="botao-discreto" onClick={() => setMensagensEstado(() => { conversaGuardada = null; return [{ id: id(), autor: 'assistente', texto: 'Conversa reiniciada. Como posso ajudar?' }]; })}><RotateCcw className="h-4 w-4" aria-hidden /> Nova conversa</button>
+      </CabecalhoPagina>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
         <section className="cartao flex h-[600px] flex-col p-0" aria-label="Conversa">
@@ -83,7 +94,7 @@ export function Assistente() {
                 <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${m.autor === 'pessoa' ? 'rounded-br-sm bg-marca text-white' : 'rounded-bl-sm bg-tinta-fundo'}`}>
                   <TextoRico texto={m.texto} />
                   {m.autor === 'assistente' && m.origem && (
-                    <p className="mt-2 text-xs text-tinta-suave">{m.origem === 'ia' ? `✨ IA generativa${m.modelo ? ` (${m.modelo})` : ''}, explicando os números do simulador` : '⚙ Resposta pelas regras do simulador'}</p>
+                    <p className="mt-2 flex items-center gap-1.5 text-xs text-tinta-suave">{m.origem === 'ia' ? <Sparkles className="h-3.5 w-3.5 text-marca" aria-hidden /> : <Calculator className="h-3.5 w-3.5" aria-hidden />}{m.origem === 'ia' ? `IA generativa${m.modelo ? ` (${m.modelo})` : ''}, explicando os números do simulador` : 'Resposta pelas regras do simulador'}</p>
                   )}
                   {m.fontes && (
                     <p className="mt-2 border-t border-tinta-linha pt-2 text-xs text-tinta-suave">
@@ -137,8 +148,8 @@ export function Assistente() {
             <p className="mt-2 text-tinta-suave">
               O simulador calcula os números; a IA só explica, sem inventar valores. Se a IA não responder, as regras do simulador respondem no lugar.
             </p>
-            {iaStatus === 'ok' && <p className="mt-2 font-semibold text-ok">● IA generativa conectada</p>}
-            {iaStatus === 'falhou' && <p className="mt-2 font-semibold text-marca-profundo">● IA indisponível agora; respondendo pelas regras</p>}
+            {iaStatus === 'ok' && <p className="mt-2 flex items-center gap-2 font-semibold text-ok"><span aria-hidden className="h-2 w-2 rounded-full bg-ok" />IA generativa conectada</p>}
+            {iaStatus === 'falhou' && <p className="mt-2 flex items-center gap-2 font-semibold text-marca-profundo"><span aria-hidden className="h-2 w-2 rounded-full bg-marca-profundo" />IA indisponível agora; respondendo pelas regras</p>}
             <p className="mt-2 text-xs text-tinta-suave">A pergunta e os números da simulação são enviados a um servidor intermediário e ao OpenRouter. Não envie dados pessoais.</p>
             <p className="mt-2"><Selo tipo="demonstrativo" /></p>
           </div>
@@ -154,7 +165,10 @@ export function Assistente() {
         </aside>
       </div>
 
-      <NavegacaoJornada pagina="assistente" rotuloContinuar="Simular a opção escolhida" />
+      <div className="mt-8 flex flex-wrap justify-between gap-3 border-t border-tinta-linha pt-6">
+        <button type="button" className="botao-discreto" onClick={() => history.back()}>← Voltar para onde eu estava</button>
+        <button type="button" className="botao-secundario" onClick={() => irPara('comparador')}>Ir para a comparação →</button>
+      </div>
     </div>
   );
 }

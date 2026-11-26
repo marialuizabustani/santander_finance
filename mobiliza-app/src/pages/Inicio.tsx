@@ -1,15 +1,17 @@
 import { km as fmtKm, pct, reais } from '../components/formato';
+import { Calculator, Landmark, MapPin, MessageSquare, Play, Scale, Store, Zap, type LucideIcon } from 'lucide-react';
 import { NOME_MODALIDADE, veiculoPorId } from '../data/veiculos';
 import { useEstado } from '../state/estado';
 import { irPara, type IdPagina } from '../state/rotas';
 
-const AREAS: { id: IdPagina; titulo: string; texto: string; icone: string }[] = [
-  { id: 'rotina', titulo: 'Minha Rotina', texto: 'Marque seus trajetos no mapa e descubra quantos km você roda por mês.', icone: '📍' },
-  { id: 'comparador', titulo: 'Comparador', texto: 'Elétrico, híbrido ou combustão. À vista, financiado, leasing ou assinatura.', icone: '⚖' },
-  { id: 'eletrico', titulo: 'Mobilidade Elétrica', texto: 'Autonomia, recarga e carregadores, explicados para a sua rotina.', icone: '⚡' },
-  { id: 'assistente', titulo: 'Mobiliza IA', texto: 'Tire dúvidas na hora, com os seus próprios números.', icone: '💬' },
-  { id: 'conta', titulo: 'Conta e taxa', texto: 'Simule como conta e salário no banco podem reduzir a taxa do financiamento.', icone: '🏦' },
-  { id: 'lojista', titulo: 'Área do Lojista', texto: 'Atendimento na concessionária, do veículo à proposta.', icone: '🏪' },
+const AREAS: { id: IdPagina; titulo: string; texto: string; icone: LucideIcon }[] = [
+  { id: 'rotina', titulo: 'Minha Rotina', texto: 'Marque seus trajetos no mapa e descubra quantos km você roda por mês.', icone: MapPin },
+  { id: 'comparador', titulo: 'Comparador', texto: 'Elétrico, híbrido ou combustão. À vista, financiado, leasing ou assinatura.', icone: Scale },
+  { id: 'simulador', titulo: 'Simulador completo', texto: 'Financiar, alugar e comprar no final ou assinar, com todos os detalhes: SAC ou Price, IOF, CET e tabela por prazos.', icone: Calculator },
+  { id: 'eletrico', titulo: 'Mobilidade Elétrica', texto: 'Autonomia, recarga e carregadores, explicados para a sua rotina.', icone: Zap },
+  { id: 'assistente', titulo: 'Mobiliza IA', texto: 'Tire dúvidas na hora, com os seus próprios números.', icone: MessageSquare },
+  { id: 'conta', titulo: 'Conta e taxa', texto: 'Simule como conta e salário no banco podem reduzir a taxa do financiamento.', icone: Landmark },
+  { id: 'lojista', titulo: 'Área do Lojista', texto: 'Atendimento na concessionária, do veículo à proposta.', icone: Store },
 ];
 
 export function Inicio() {
@@ -32,7 +34,7 @@ export function Inicio() {
                 Descobrir minha mobilidade ideal →
               </button>
               <button type="button" className="botao border border-white/70 text-white hover:bg-white/10" onClick={iniciarDemonstracao}>
-                ▶ Demonstração ao vivo
+                <Play className="h-4 w-4" fill="currentColor" aria-hidden /> Demonstração ao vivo
               </button>
             </div>
           </div>
@@ -80,7 +82,7 @@ export function Inicio() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {AREAS.map((a) => (
             <button key={a.id} type="button" onClick={() => irPara(a.id)} className="cartao text-left transition-shadow hover:shadow-md">
-              <span aria-hidden className="mb-2 grid h-11 w-11 place-items-center rounded-xl bg-marca-suave text-xl">{a.icone}</span>
+              <span aria-hidden className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-marca-claro text-marca"><a.icone className="h-5 w-5" /></span>
               <span className="block text-lg font-bold">{a.titulo}</span>
               <span className="mt-1 block text-tinta-suave">{a.texto}</span>
             </button>

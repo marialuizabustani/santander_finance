@@ -12,6 +12,7 @@ import { Proposta } from './pages/Proposta';
 import { ProximosPassos } from './pages/ProximosPassos';
 import { Rotina } from './pages/Rotina';
 import { Simulacao } from './pages/Simulacao';
+import { SimuladorClassico } from './pages/SimuladorClassico';
 import { calcularRota, type RotaCalculada } from './services/roteamento';
 import { useEstado } from './state/estado';
 import { useRota } from './state/rotas';
@@ -52,6 +53,7 @@ export function App() {
     lojista: <Lojista />,
     proposta: <Proposta dados={params.get('d')} />,
     premissas: <Premissas />,
+    simulador: <SimuladorClassico />,
   };
   return (
     <Layout pagina={pagina}>

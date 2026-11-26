@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { Info } from 'lucide-react';
 import { irPara, JORNADA, type IdPagina } from '../state/rotas';
 
 /** Selo que diferencia a natureza de cada dado: real, estimativa, hipótese ou fictício. */
@@ -47,7 +48,7 @@ export function Termo({ termo, children }: { termo: string; children: ReactNode 
   return (
     <span className="relative inline-block">
       <button type="button" onClick={() => setAberto(!aberto)} className="border-b border-dotted border-tinta-suave font-medium" aria-expanded={aberto}>
-        {termo} <span aria-hidden className="text-xs text-marca">ⓘ</span>
+        {termo} <Info className="inline h-3.5 w-3.5 align-[-2px] text-marca" aria-hidden />
       </button>
       {aberto && (
         <span role="note" className="absolute left-0 top-full z-20 mt-1 block w-64 rounded-xl border border-tinta-linha border-t-4 border-t-marca bg-white p-3 text-sm font-normal text-tinta shadow-lg">

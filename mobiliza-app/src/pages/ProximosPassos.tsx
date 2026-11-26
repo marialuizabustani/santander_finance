@@ -1,4 +1,5 @@
 import { km as fmtKm, reais } from '../components/formato';
+import { Download, Printer } from 'lucide-react';
 import { CabecalhoPagina, Cartao, NavegacaoJornada } from '../components/ui';
 import { NOME_MODALIDADE, veiculoPorId } from '../data/veiculos';
 import { useEstado, type DadosSessao, type Derivados } from '../state/estado';
@@ -66,8 +67,8 @@ export function ProximosPassos() {
             <div><dt className="text-sm text-tinta-suave">Custo total em {o.horizonteMeses} meses</dt><dd className="text-lg font-bold">{reais(o.custoLiquido)}</dd></div>
           </dl>
           <div className="mt-5 flex flex-wrap gap-2">
-            <button type="button" className="botao-primario" onClick={baixar}>⬇ Exportar resumo</button>
-            <button type="button" className="botao-secundario" onClick={() => window.print()}>🖨 Imprimir</button>
+            <button type="button" className="botao-primario" onClick={baixar}><Download className="h-4 w-4" aria-hidden /> Exportar resumo</button>
+            <button type="button" className="botao-secundario" onClick={() => window.print()}><Printer className="h-4 w-4" aria-hidden /> Imprimir</button>
           </div>
         </Cartao>
         <Cartao titulo="O que fazer agora">

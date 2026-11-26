@@ -42,7 +42,7 @@ export function Diagnostico() {
           <Cartao titulo={diagnostico.titulo} subtitulo={diagnostico.resumo}>
             <ul className="space-y-2">
               {diagnostico.pontos.map((p) => (
-                <li key={p} className="flex gap-2"><span className="text-marca">●</span><span>{p}</span></li>
+                <li key={p} className="flex gap-2"><span aria-hidden className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-marca" /><span>{p}</span></li>
               ))}
             </ul>
           </Cartao>

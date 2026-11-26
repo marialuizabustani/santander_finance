@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Monitor, Printer, X } from 'lucide-react';
 import { km as fmtKm, pct, reais } from '../components/formato';
 import { QrCode } from '../components/QrCode';
 import { Aviso, CabecalhoPagina, CampoNumero, Interruptor, Selo } from '../components/ui';
@@ -104,7 +105,7 @@ export function Lojista() {
   return (
     <div>
       <CabecalhoPagina titulo="Área do Lojista · modo balcão" descricao="Para usar na concessionária junto com o cliente: o vendedor monta a simulação e o pacote à esquerda; o cliente acompanha o resultado à direita.">
-        <div className="flex items-center gap-2"><Selo tipo="demonstrativo" /><button type="button" className="botao-primario" onClick={() => setTelaCliente(true)}>🖥 Mostrar ao cliente</button></div>
+        <div className="flex items-center gap-2"><Selo tipo="demonstrativo" /><button type="button" className="botao-primario" onClick={() => setTelaCliente(true)}><Monitor className="h-4 w-4" aria-hidden /> Mostrar ao cliente</button></div>
       </CabecalhoPagina>
 
       <ol className="mb-6 grid grid-cols-3 gap-2 sm:grid-cols-6" aria-label="Etapas do atendimento">
@@ -199,7 +200,7 @@ export function Lojista() {
                 <p className="mt-1 text-[15px]">{loja} · {vendedor}</p>
                 <div className="mt-4"><Aviso tipo="atencao">Proposta FICTÍCIA para demonstração. Não é oferta de crédito e não foi enviada a nenhum sistema.</Aviso></div>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <button type="button" className="botao-secundario" onClick={() => window.print()}>🖨 Imprimir</button>
+                  <button type="button" className="botao-secundario" onClick={() => window.print()}><Printer className="h-4 w-4" aria-hidden /> Imprimir</button>
                   <button type="button" className="botao-secundario" onClick={() => navigator.clipboard?.writeText(link)}>Copiar link</button>
                 </div>
               </div>
@@ -227,7 +228,7 @@ export function Lojista() {
           <div className="mx-auto max-w-3xl p-6 sm:p-10">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-xl font-bold">Santander <span className="text-marca">Mobiliza</span></p>
-              <button type="button" className="botao-secundario" onClick={() => setTelaCliente(false)}>✕ Fechar</button>
+              <button type="button" className="botao-secundario" onClick={() => setTelaCliente(false)}><X className="h-4 w-4" aria-hidden /> Fechar</button>
             </div>
             <Painel grande />
           </div>

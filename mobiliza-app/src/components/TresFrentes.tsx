@@ -88,7 +88,7 @@ export function TresFrentes({ compacto = false }: { compacto?: boolean }) {
                     </select>
                   )}
                   <span className="mt-1 block text-xs font-normal text-tinta-suave">{c.frente === 'contrato' ? NOME_MODALIDADE[contrato] : 'Financiamento'}</span>
-                  {c === menor && <span className="chip mt-1 bg-marca text-white">★ menor custo total</span>}
+                  {c === menor && <span className="chip mt-1 bg-marca text-white">Menor custo total</span>}
                 </th>
               ))}
             </tr>
